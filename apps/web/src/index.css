@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-paper text-ink font-sans antialiased;
+}
+
+/* The packet is a document, so its rules are hairlines rather than card borders. */
+.hairline {
+  @apply border-rule;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
