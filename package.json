@@ -1,0 +1,14 @@
+{
+  "name": "stopgap",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Stopgap drafts a sourced availability packet for a hospital pharmacist when a drug goes into shortage. It never names a substitute.",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "dev:server": "pnpm --filter @stopgap/server dev",
+    "dev:web": "pnpm --filter @stopgap/web dev",
+    "build": "pnpm -r build",
+    "packet": "pnpm --filter @stopgap/server packet"
+  },
+  "packageManager": "pnpm@9.9.0"
+}
