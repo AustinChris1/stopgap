@@ -6,6 +6,8 @@ and stops where the clinical judgement starts.
 
 Open Agent Hackathon 2026, Track 02: The Agent That Can Explain Why.
 
+**Live:** https://genai-eta-snowy.vercel.app
+
 **The mark:** two supply bars stopping short of each other, leaving the signature rule open in the gap.
 
 ## What it refuses to do
@@ -65,6 +67,19 @@ pnpm packet                                   # the same packet, with that decis
 | `ZETARIS_API_KEY`, `ZETARIS_REST_URL`, `ZETARIS_ORG_ID` | the Zetaris panel reports unreachable; the packet still builds |
 | `NVIDIA_API_KEY` | the refusal sentence is skipped and the omission is shown |
 | `STOPGAP_PIN_NDC` | defaults to the Hikma dopamine 40 mg/mL package currently unavailable |
+
+## Hosting
+
+The site is a static build plus one serverless function. `api/index.ts` mounts the same Hono
+app the local server uses, through the node-server adapter that Vercel's Node runtime expects.
+
+Two things behave differently when hosted, and the app says so on screen rather than pretending
+otherwise:
+
+- **Zetaris** runs on the operator's own machine, so a deployment cannot reach it. The panel
+  reports that and the packet still builds. Run locally to demonstrate the federation.
+- **Memory** falls back to `/tmp`, which is per-instance and not shared, so a stored decision
+  lasts for the session rather than for the facility. Run locally for durable memory.
 
 ## Layout
 
