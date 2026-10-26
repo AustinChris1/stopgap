@@ -10,58 +10,44 @@ video must show both. Meterless is already wired. Zetaris needs a local install.
 
 ### Before you start
 
-Free up disk. The install guide wants at least 15 GB free plus room for datasets and logs, and
-the preflight script fails below 6 GB of memory available to Docker.
+Give Docker 8 GB of memory and 4 CPUs in Settings then Resources. The preflight script fails
+below 6 GB, and a 4 GB VM dies after the download finishes with an out of memory kill that
+names nothing useful. You also need 15 GB free on disk: the download is about 4 GB and the
+images unpack to about 10 GB.
 
-Start Docker Desktop and wait for the whale icon to stop animating. On Windows, run the shell
-commands below from WSL2 with Docker Desktop integration enabled.
+On Windows, run the shell commands from WSL.
 
 ### Get the archive
 
-1. Register or sign in at https://cloud.enterprise.zetaris.com/register
-2. Open the Run locally page at https://cloud.enterprise.zetaris.com/dashboard/download
-3. Download `zetaris-platform.zip` and copy the registry sign-in command shown on that page.
-   The credentials come from Zetaris and are printed there. They are not published anywhere else.
-   If the download is missing for your account, contact Zetaris Support to have it enabled.
-4. Move the zip out of Downloads before unpacking it.
+The Run locally page at https://cloud.enterprise.zetaris.com/dashboard/download has the
+registry sign-in command with its password, the zip, and the admin sign-in. The zip is 28 MB,
+most of it the JDBC driver.
+
+This repo assumes the bundle is unpacked at `~/zetaris/zetaris-platform`.
 
 ### Install
 
-```bash
-unzip zetaris-platform.zip
-cd zetaris-platform
-docker login zetarishackathon.azurecr.io    # use the credentials from the download page
-./preflight.sh
-```
-
-Edit `.env` before the first start. Set `ZETARIS_ADMIN_EMAIL` and `ZETARIS_ADMIN_PASSWORD`. The
-password needs at least eight characters with lowercase, uppercase, a digit, and one of `$ @ ! % * ? &`.
-Then set the sizing values:
-
-```
-ZSPARK_DRIVER_MEM=2g
-ZSPARK_DRIVER_CORES=2
-ZSPARK_MASTER_URL=local[2]
-ZETARIS_API_MAX_HEAP=1g
-UI_PORT=3000
-ALLOWED_ORIGINS=http://localhost:3000
-GUI_URL=http://localhost:3000
-```
+Run the `docker login` line exactly as the download page prints it. The password is only on
+that page, so copy it from there rather than retyping it.
 
 ```bash
-chmod 600 .env
-docker compose pull
-docker compose up -d
-docker compose ps --all
-./verify.sh
+cd ~/zetaris/zetaris-platform
+./preflight.sh        # every line should say PASS
+docker compose pull   # about 4 GB, 10 to 20 minutes
+docker compose up -d  # 2 to 10 minutes, setup continues after it returns
+./verify.sh           # rerun after a minute if anything fails
 ```
 
-`postgres`, `driver`, `api`, `ui` and `ai-datasteward` should be running. `init` and `bootstrap`
-should show `Exited (0)`. `verify.sh` passes nine checks.
+Nothing in `.env` has to be edited. The bundle ships working defaults, including the
+administrator account. Everything binds to 127.0.0.1, so nothing on your network can reach it.
+
+`postgres`, `driver` and `api` should be healthy, `ui` and `bootstrap` started, and `init`
+exited cleanly.
 
 ### Connect Stopgap to it
 
-1. Open http://localhost:3000 and sign in with the administrator account you just created.
+1. Open http://localhost:3000 and sign in. The admin email and password are on the download page
+   and in the bundle's `.env`. Change the password from the user menu once you are in.
 2. Run `SELECT 1 AS one;` in the SQL Editor to confirm the engine answers.
 3. Management then Organisation. Copy the numeric **ID** field, not the name or the URL slug.
 4. Management then API Tokens. Click **+** and copy the key. It is shown once.
