@@ -5,3 +5,5 @@ dist/
 .stopgap/
 *.log
 .DS_Store
+
+.vercel

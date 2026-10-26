@@ -1,8 +1,6 @@
-import { handle } from "hono/vercel";
+import { handle } from "@hono/node-server/vercel";
 import app from "../apps/server/src/app.ts";
 
-// The packet reads public FDA and NLM endpoints at request time, so it needs a
-// real runtime rather than the edge, and a little headroom for the enrichment fan-out.
-export const config = { runtime: "nodejs", maxDuration: 30 };
-
+// Vercel's Node runtime calls the handler with (req, res), so this adapter is the
+// right one; the Web-standard hono/vercel handler never responds and times out.
 export default handle(app);
