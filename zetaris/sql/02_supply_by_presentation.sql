@@ -8,7 +8,6 @@ SELECT
     availability,
     update_date,
     resupply_note,
-    shortage_reason,
-    file_last_updated
+    shortage_reason
 FROM stopgap.supply_rows
 ORDER BY product_form, availability, labeler, ndc

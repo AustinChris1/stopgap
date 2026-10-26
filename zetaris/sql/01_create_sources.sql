@@ -17,9 +17,10 @@ CACHE TABLE openfda.dopamine_shortages_raw;
 CREATE SCHEMASTORE CONTAINER stopgap;
 
 -- One row per package NDC, using only columns already on the row.
+-- The response envelope's meta struct is deliberately not referenced, so the
+-- view does not depend on how the connector exposes it.
 CREATE SCHEMASTORE VIEW supply_rows WITH CONTAINER stopgap AS
 SELECT
-    meta.last_updated AS file_last_updated,
     r.package_ndc AS ndc,
     r.company_name AS labeler,
     r.presentation AS presentation,
