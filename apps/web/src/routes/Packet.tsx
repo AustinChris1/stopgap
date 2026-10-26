@@ -29,22 +29,25 @@ export function PacketView() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-10 border-b hairline bg-paper/90 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b hairline bg-paper/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3.5">
-          <Link to="/">
+          <Link to="/" className="rounded-sm">
             <Wordmark compact />
           </Link>
-          <div className="flex items-center gap-3">
-            <label className="font-mono text-[11px] uppercase tracking-wider text-quiet">Facility</label>
+          <div className="flex min-w-0 flex-wrap items-center justify-end gap-x-3 gap-y-2">
+            <label htmlFor="facility" className="text-xs text-quiet">
+              Facility
+            </label>
             <input
+              id="facility"
               value={facility}
               onChange={(e) => setFacility(e.target.value.trim() || "default")}
-              className="w-36 border hairline bg-white px-2.5 py-1.5 font-mono text-xs outline-none focus:border-ink"
+              className="w-24 border hairline bg-white px-2.5 py-1.5 font-mono text-xs outline-none focus:border-ink sm:w-36"
             />
             <button
               onClick={() => void load()}
               disabled={loading}
-              className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-xs font-medium text-paper disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-xs font-medium text-paper transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
               Re-query live
@@ -53,15 +56,22 @@ export function PacketView() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl space-y-10 px-4 py-10">
+      <main className="mx-auto max-w-6xl space-y-12 overflow-x-clip px-4 py-10">
         {error && (
-          <div className="flex items-start gap-3 border hairline bg-white p-4 text-sm">
+          <div className="flex items-start gap-3 border hairline bg-white p-5 text-sm">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-short" />
             <div>
               <p className="font-medium">The packet was not built.</p>
               <p className="mt-1 font-mono text-xs text-quiet">{error}</p>
               <p className="mt-2 text-xs text-quiet">Start the API with pnpm dev:server, then re-query.</p>
             </div>
+          </div>
+        )}
+
+        {!packet && !error && (
+          <div className="flex items-center gap-3 border hairline bg-white p-5 text-sm text-quiet">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Reading the FDA shortage file.
           </div>
         )}
 
@@ -100,18 +110,28 @@ export function PacketView() {
   );
 }
 
+function SectionLabel({ children, count }: { children: React.ReactNode; count?: number }) {
+  return (
+    <div className="flex flex-wrap items-baseline justify-between gap-2">
+      <h2 className="text-sm font-semibold tracking-wide">{children}</h2>
+      {count !== undefined && <span className="font-mono text-xs tabular text-quiet">{count}</span>}
+    </div>
+  );
+}
+
 function Provenance({ packet }: { packet: Packet }) {
   const p = packet.provenance;
   return (
-    <div className="flex flex-wrap items-center gap-x-8 gap-y-2 border hairline bg-white px-5 py-4 font-mono text-[11px] uppercase tracking-wider text-quiet">
+    <div className="flex flex-wrap items-center gap-x-8 gap-y-2 border hairline bg-white px-5 py-4 text-xs text-quiet">
       <span>
-        FDA file updated <strong className="text-ink">{p.openFdaLastUpdated}</strong>
+        FDA file updated <strong className="font-mono tabular font-medium text-ink">{p.openFdaLastUpdated}</strong>
       </span>
       <span>
-        Rows returned <strong className="text-ink tabular">{p.openFdaRowsReturned}</strong>
+        Rows returned <strong className="font-mono tabular font-medium text-ink">{p.openFdaRowsReturned}</strong>
       </span>
       <span>
-        Re-queried <strong className="text-ink">{new Date(p.fetchedAt).toLocaleTimeString()}</strong>
+        Re-queried{" "}
+        <strong className="font-mono tabular font-medium text-ink">{new Date(p.fetchedAt).toLocaleTimeString()}</strong>
       </span>
       <a href={p.openFdaUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-short hover:underline">
         Source call <ExternalLink className="h-3 w-3" />
@@ -123,29 +143,27 @@ function Provenance({ packet }: { packet: Packet }) {
 function PinRow({ line }: { line: SupplyLine }) {
   return (
     <section>
-      <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-quiet">In shortage at this facility</h2>
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mt-4 border-l-2 border-short bg-white p-5"
-      >
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h3 className="font-display text-2xl font-semibold">{line.presentation.split("(")[0].trim()}</h3>
+      <SectionLabel>In shortage at this facility</SectionLabel>
+      <div className="mt-4 border hairline border-l-short bg-white p-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+          <h3 className="min-w-0 break-words font-display text-2xl font-semibold tracking-[-0.02em]">
+            {line.presentation.split("(")[0].trim()}
+          </h3>
           <Availability value={line.availability} />
         </div>
-        <dl className="mt-4 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
+        <dl className="mt-5 grid gap-x-10 gap-y-3 text-sm sm:grid-cols-2">
           <Field label="Labeler" value={line.labeler} />
           <Field label="Package NDC" value={line.ndc} mono />
           <Field label="Reason given" value={line.shortageReason ?? "not stated"} />
           <Field label="FDA row updated" value={line.updateDate ?? "unknown"} mono />
         </dl>
         {line.resupplyNote && (
-          <p className="mt-4 border-t hairline pt-3 text-sm leading-relaxed">
-            <span className="font-mono text-[11px] uppercase tracking-wider text-quiet">Manufacturer note </span>
+          <p className="mt-5 border-t hairline pt-4 text-sm leading-relaxed">
+            <span className="text-quiet">Manufacturer note. </span>
             {line.resupplyNote}
           </p>
         )}
-      </motion.div>
+      </div>
     </section>
   );
 }
@@ -153,48 +171,50 @@ function PinRow({ line }: { line: SupplyLine }) {
 function Group({ title, note, lines, muted = false }: { title: string; note: string; lines: SupplyLine[]; muted?: boolean }) {
   return (
     <section>
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-quiet">{title}</h2>
-        <span className="font-mono text-xs tabular text-quiet">{lines.length}</span>
-      </div>
-      <p className="mt-1.5 text-sm text-quiet">{note}</p>
+      <SectionLabel count={lines.length}>{title}</SectionLabel>
+      <p className="mt-1.5 max-w-[70ch] break-words text-sm text-quiet">{note}</p>
       {lines.length === 0 ? (
         <p className="mt-4 border hairline bg-white px-5 py-4 text-sm text-quiet">No rows in this group.</p>
       ) : (
         <ul className="mt-4 divide-y divide-rule border hairline bg-white">
           <AnimatePresence initial={false}>
-            {lines.map((l, i) => (
+            {lines.map((l) => (
               <motion.li
                 key={l.ndc}
                 layout
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: muted ? 0.65 : 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: muted ? 0.7 : 1 }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3, delay: i * 0.04 }}
+                transition={{ duration: 0.25 }}
                 className="p-5"
               >
-                <div className="flex flex-wrap items-baseline justify-between gap-3">
-                  <div>
-                    <p className="font-medium">{l.labeler}</p>
-                    <p className="mt-0.5 text-sm text-quiet">{l.presentation}</p>
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1.5">
+                  <div className="min-w-0 flex-1">
+                    <p className="break-words font-medium">{l.labeler}</p>
+                    <p className="mt-0.5 max-w-[70ch] break-words text-sm text-quiet">{l.presentation}</p>
                   </div>
                   <Availability value={l.availability} />
                 </div>
-                <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1.5 font-mono text-[11px] uppercase tracking-wider text-quiet">
+                <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1.5 font-mono text-xs tabular text-quiet">
                   <span>NDC {l.ndc}</span>
                   {l.updateDate && <span>updated {l.updateDate}</span>}
                   {l.rxcuiExact && <span>RxCUI {l.rxcuiExact}</span>}
                   {l.label?.labelUrl && (
-                    <a href={l.label.labelUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-short hover:underline">
+                    <a
+                      href={l.label.labelUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 font-sans text-short hover:underline"
+                    >
                       FDA label <ExternalLink className="h-3 w-3" />
                     </a>
                   )}
                 </div>
-                {l.conceptName && <p className="mt-2 text-xs text-quiet">RxNorm concept: {l.conceptName}</p>}
-                {l.resupplyNote && <p className="mt-2 text-xs leading-relaxed text-ink/75">{l.resupplyNote}</p>}
+                {l.conceptName && <p className="mt-2 break-words text-xs text-quiet">RxNorm concept: {l.conceptName}</p>}
+                {l.resupplyNote && <p className="mt-2 max-w-[70ch] text-xs leading-relaxed text-ink/75">{l.resupplyNote}</p>}
                 {l.excludedBy && (
-                  <p className="mt-3 border-l-2 border-rule pl-3 text-xs leading-relaxed">
-                    <span className="font-mono uppercase tracking-wider text-quiet">Excluded by {l.excludedBy.decisionId} </span>
+                  <p className="mt-3 border-l hairline pl-3 text-xs leading-relaxed">
+                    <span className="text-quiet">Excluded by {l.excludedBy.decisionId}. </span>
                     {l.excludedBy.content}
                   </p>
                 )}
@@ -209,10 +229,8 @@ function Group({ title, note, lines, muted = false }: { title: string; note: str
 
 function Availability({ value }: { value: string }) {
   const available = /^available$/i.test(value);
-  const limited = /limited/i.test(value);
-  const tone = available ? "text-supply" : limited ? "text-short" : "text-short";
   return (
-    <span className={`inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider ${tone}`}>
+    <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${available ? "text-supply" : "text-short"}`}>
       <span className="inline-block h-1.5 w-1.5 rounded-full bg-current" />
       {value}
     </span>
@@ -222,48 +240,62 @@ function Availability({ value }: { value: string }) {
 function Field({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
   return (
     <div>
-      <dt className="font-mono text-[11px] uppercase tracking-wider text-quiet">{label}</dt>
-      <dd className={mono ? "mt-0.5 font-mono text-sm" : "mt-0.5 text-sm"}>{value}</dd>
+      <dt className="text-xs text-quiet">{label}</dt>
+      <dd className={mono ? "mt-0.5 break-words font-mono text-sm tabular" : "mt-0.5 break-words text-sm"}>{value}</dd>
     </div>
   );
 }
 
 function Conclusion({ packet }: { packet: Packet }) {
   const [refusal, setRefusal] = useState<{ text?: string; error?: string; model: string | null } | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function draft() {
+    setBusy(true);
+    try {
+      setRefusal(await api.refusal());
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
-    <section className="border-2 border-ink bg-white p-6 sm:p-8">
-      <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-quiet">Clinical conclusion</h2>
-      <p className="mt-4 max-w-2xl font-display text-xl leading-snug">{packet.disclaimers.scope}</p>
+    <section className="border-2 border-ink bg-white p-7 sm:p-10">
+      <SectionLabel>Clinical conclusion</SectionLabel>
+      <p className="mt-5 max-w-[46ch] font-display text-2xl leading-snug tracking-[-0.02em]">
+        {packet.disclaimers.scope}
+      </p>
 
-      <div className="mt-6">
+      <div className="mt-7">
         <button
-          onClick={async () => setRefusal(await api.refusal())}
-          className="inline-flex items-center gap-2 border hairline px-3.5 py-2 font-mono text-[11px] uppercase tracking-wider hover:bg-paper"
+          onClick={() => void draft()}
+          disabled={busy}
+          className="inline-flex items-center gap-2 border hairline px-4 py-2.5 text-xs font-medium transition-colors hover:bg-paper disabled:opacity-50"
         >
-          <Brain className="h-3.5 w-3.5" /> Draft the refusal line with Nemotron
+          {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Brain className="h-3.5 w-3.5" />}
+          Draft the refusal line with Nemotron
         </button>
         {refusal?.text && (
-          <p className="mt-3 max-w-2xl border-l-2 border-supply pl-3 text-sm leading-relaxed">
+          <p className="mt-4 max-w-[62ch] border-l hairline pl-4 text-sm leading-relaxed">
             {refusal.text}
-            <span className="mt-1 block font-mono text-[11px] uppercase tracking-wider text-quiet">{refusal.model}</span>
+            <span className="mt-1.5 block font-mono text-xs text-quiet">{refusal.model}</span>
           </p>
         )}
         {refusal?.error && (
-          <p className="mt-3 font-mono text-xs text-short">Nemotron unavailable: {refusal.error}. The packet stands without it.</p>
+          <p className="mt-4 max-w-[62ch] text-xs text-short">
+            Nemotron unavailable: {refusal.error}. The packet stands without it.
+          </p>
         )}
       </div>
 
-      <div className="mt-10 flex flex-wrap items-end gap-6">
-        <div className="min-w-[220px] flex-1">
-          <div className="h-10" />
+      <div className="mt-16 flex flex-wrap items-end gap-x-8 gap-y-10">
+        <div className="min-w-[14rem] flex-1">
           <div className="h-px w-full bg-ink/70" />
-          <p className="mt-2 font-mono text-[11px] uppercase tracking-wider text-quiet">Pharmacist signature</p>
+          <p className="mt-2.5 text-xs text-quiet">Pharmacist signature</p>
         </div>
         <div className="w-36">
-          <div className="h-10" />
           <div className="h-px w-full bg-ink/70" />
-          <p className="mt-2 font-mono text-[11px] uppercase tracking-wider text-quiet">Date</p>
+          <p className="mt-2.5 text-xs text-quiet">Date</p>
         </div>
       </div>
     </section>
@@ -291,54 +323,60 @@ function MemoryPanel({ facility, decisions, onChange }: { facility: string; deci
   }
 
   return (
-    <section className="border hairline bg-white p-5">
+    <section className="border hairline bg-white p-6">
       <div className="flex items-center gap-2">
         <Brain className="h-4 w-4 text-short" />
-        <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-quiet">Meterless memory</h2>
+        <h2 className="text-sm font-semibold tracking-wide">Meterless memory</h2>
       </div>
-      <p className="mt-2.5 text-sm text-quiet">
-        One decision from a pharmacist. Stored in H-MEM with its source, and applied to every later packet.
+      <p className="mt-2.5 max-w-[60ch] text-sm text-quiet">
+        One decision from a pharmacist, stored with its source and applied to every later packet.
       </p>
 
-      <div className="mt-4 space-y-2.5">
+      <div className="mt-5 space-y-2.5">
+        <label htmlFor="decision" className="sr-only">
+          Decision
+        </label>
         <textarea
+          id="decision"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={2}
           className="w-full border hairline px-3 py-2 text-sm outline-none focus:border-ink"
         />
-        <div className="flex gap-2.5">
+        <div className="flex flex-wrap gap-2.5">
           <input
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder="exclude keyword"
+            aria-label="Exclude keyword"
             className="w-36 border hairline px-3 py-2 font-mono text-xs outline-none focus:border-ink"
           />
           <input
             value={signedBy}
             onChange={(e) => setSignedBy(e.target.value)}
             placeholder="entered by (required)"
-            className="flex-1 border hairline px-3 py-2 text-sm outline-none focus:border-ink"
+            aria-label="Entered by"
+            className="min-w-[12rem] flex-1 border hairline px-3 py-2 text-sm outline-none focus:border-ink"
           />
         </div>
         <button
           onClick={() => void add()}
           disabled={busy || !signedBy.trim()}
-          className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-xs font-medium text-paper disabled:opacity-40"
+          className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-xs font-medium text-paper transition-opacity hover:opacity-90 disabled:opacity-40"
         >
           {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
           Store and rebuild the packet
         </button>
-        {trace && <p className="font-mono text-[11px] text-quiet">retrieval trace: {trace}</p>}
+        {trace && <p className="text-xs text-quiet">Retrieval trace: {trace}</p>}
       </div>
 
       {decisions.length > 0 && (
-        <ul className="mt-5 divide-y divide-rule border-t hairline">
+        <ul className="mt-6 divide-y divide-rule border-t hairline">
           {decisions.map((d) => (
-            <li key={d.id} className="flex items-start justify-between gap-3 py-3">
+            <li key={d.id} className="flex items-start justify-between gap-3 py-3.5">
               <div>
                 <p className="text-sm">{d.content}</p>
-                <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-quiet">
+                <p className="mt-1 font-mono text-xs text-quiet">
                   {d.id} · {d.source}
                   {d.excludeKeyword ? ` · exclude:${d.excludeKeyword}` : ""}
                 </p>
@@ -348,8 +386,8 @@ function MemoryPanel({ facility, decisions, onChange }: { facility: string; deci
                   await api.retireDecision(d.id);
                   onChange();
                 }}
-                className="shrink-0 text-quiet hover:text-short"
-                aria-label="Retire this decision"
+                className="shrink-0 rounded-sm text-quiet transition-colors hover:text-short"
+                aria-label={`Retire decision ${d.id}`}
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -385,51 +423,54 @@ function ZetarisPanel({ initial }: { initial: ZetarisProvenance | null }) {
   }
 
   return (
-    <section className="border hairline bg-white p-5">
+    <section className="border hairline bg-white p-6">
       <div className="flex items-center gap-2">
         <Database className="h-4 w-4 text-short" />
-        <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-quiet">Zetaris federation</h2>
+        <h2 className="text-sm font-semibold tracking-wide">Zetaris federation</h2>
       </div>
-      <p className="mt-2.5 text-sm text-quiet">
-        The FDA endpoint registered as a Lightning REST table, queried in place. Nothing is copied into a warehouse.
+      <p className="mt-2.5 max-w-[60ch] text-sm text-quiet">
+        The FDA endpoint registered as a Lightning REST table and queried in place. Nothing is copied into a warehouse.
       </p>
 
-      <div className="mt-3 font-mono text-[11px] uppercase tracking-wider text-quiet">
+      <p className="mt-3 font-mono text-xs text-quiet">
         {status ? (
           <>
-            {status.base} · {status.configured ? "key set" : "no key"} · {status.reachable ? "reachable" : "unreachable"}
+            {status.base} · {status.configured ? "credentials set" : "no credentials"} ·{" "}
+            <span className={status.reachable ? "text-supply" : "text-short"}>
+              {status.reachable ? "reachable" : "unreachable"}
+            </span>
           </>
         ) : (
           "status unknown"
         )}
-      </div>
+      </p>
 
-      <div className="mt-4 flex flex-wrap gap-2.5">
+      <div className="mt-5 flex flex-wrap gap-2.5">
         <button
           onClick={() => act(async () => setLog((await api.zetarisSetup()).log))}
           disabled={busy}
-          className="border hairline px-3.5 py-2 font-mono text-[11px] uppercase tracking-wider hover:bg-paper disabled:opacity-40"
+          className="border hairline px-4 py-2.5 text-xs font-medium transition-colors hover:bg-paper disabled:opacity-50"
         >
           Register source
         </button>
         <button
           onClick={() => act(async () => setRun((await api.zetarisQuery()).provenance))}
           disabled={busy}
-          className="border hairline px-3.5 py-2 font-mono text-[11px] uppercase tracking-wider hover:bg-paper disabled:opacity-40"
+          className="border hairline px-4 py-2.5 text-xs font-medium transition-colors hover:bg-paper disabled:opacity-50"
         >
           Run the join
         </button>
       </div>
 
-      {err && <p className="mt-3 font-mono text-xs text-short">{err}</p>}
+      {err && <p className="mt-3 max-w-[60ch] font-mono text-xs leading-relaxed text-short">{err}</p>}
       {log.length > 0 && (
-        <pre className="mt-3 max-h-32 overflow-auto bg-paper p-3 font-mono text-[11px] leading-relaxed">{log.join("\n")}</pre>
+        <pre className="mt-3 max-h-36 overflow-auto bg-paper p-3 font-mono text-xs leading-relaxed">{log.join("\n")}</pre>
       )}
       {run && (
-        <div className="mt-3 font-mono text-[11px] uppercase tracking-wider text-quiet">
-          {run.sqlFile} returned <strong className="text-ink tabular">{run.rowCount}</strong> rows at{" "}
-          {new Date(run.ranAt).toLocaleTimeString()}
-        </div>
+        <p className="mt-3 text-xs text-quiet">
+          {run.sqlFile} returned <strong className="font-mono tabular font-medium text-ink">{run.rowCount}</strong> rows
+          at <span className="font-mono tabular">{new Date(run.ranAt).toLocaleTimeString()}</span>
+        </p>
       )}
     </section>
   );
@@ -438,8 +479,8 @@ function ZetarisPanel({ initial }: { initial: ZetarisProvenance | null }) {
 function Disclaimers({ packet }: { packet: Packet }) {
   return (
     <footer className="space-y-3 border-t hairline pt-6 text-xs leading-relaxed text-quiet">
-      <p>{packet.disclaimers.openFda}</p>
-      <p>{packet.disclaimers.nlm}</p>
+      <p className="max-w-[80ch]">{packet.disclaimers.openFda}</p>
+      <p className="max-w-[80ch]">{packet.disclaimers.nlm}</p>
     </footer>
   );
 }

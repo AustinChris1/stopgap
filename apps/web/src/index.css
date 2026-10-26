@@ -4,17 +4,59 @@
 
 :root {
   color-scheme: light;
+  --ink: #15191c;
+  --paper: #f6f3ec;
+  --rule: #d8d2c4;
+  --short: #9a5b16;
+  accent-color: var(--short);
+  caret-color: var(--short);
 }
 
 body {
   @apply bg-paper text-ink font-sans antialiased;
+  overflow-x: hidden;
 }
 
-/* The packet is a document, so its rules are hairlines rather than card borders. */
+::selection {
+  background: #e4ddcb;
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--short);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: var(--paper);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border: 3px solid var(--paper);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c4bda9;
+}
+
+* {
+  scrollbar-color: var(--rule) var(--paper);
+}
+
 .hairline {
   @apply border-rule;
 }
 
+/* Identifiers and dates are read in columns, so they align by figure. */
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+a {
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
