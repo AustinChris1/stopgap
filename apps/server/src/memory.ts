@@ -4,10 +4,21 @@ import { fileURLToPath } from "node:url";
 import { HMEM, type MemoryRecord } from "../../../vendor/hmem/src/index.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const dir = resolve(here, "../../../.stopgap/hmem");
+
+// Only /tmp is writable on a serverless host, and it is not shared between
+// instances, so memory there lasts for the instance rather than for the facility.
+function dataDir(): string {
+  if (process.env.STOPGAP_DATA_DIR) return resolve(process.env.STOPGAP_DATA_DIR);
+  if (process.env.VERCEL) return "/tmp/stopgap-hmem";
+  return resolve(here, "../../../.stopgap/hmem");
+}
+
+const dir = dataDir();
 mkdirSync(dir, { recursive: true });
 
-// Meterless H-MEM reference engine. State and the append-only ledger live in .stopgap/hmem.
+export const memoryIsEphemeral = Boolean(process.env.VERCEL) && !process.env.STOPGAP_DATA_DIR;
+
+// Meterless H-MEM reference engine, with its append-only trust ledger.
 export const hmem = new HMEM({ persistDir: dir, actor: "stopgap" });
 
 export interface Decision {

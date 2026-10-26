@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { AlertCircle, Brain, Check, Database, ExternalLink, Loader2, RefreshCw, Trash2 } from "lucide-react";
-import { api, type Decision, type Packet, type SupplyLine, type ZetarisProvenance } from "../lib/api.ts";
+import { api, type Decision, type Health, type Packet, type SupplyLine, type ZetarisProvenance } from "../lib/api.ts";
 import { Wordmark } from "../components/Logo.tsx";
 
 export function PacketView() {
@@ -10,6 +10,11 @@ export function PacketView() {
   const [packet, setPacket] = useState<Packet | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [health, setHealth] = useState<Health | null>(null);
+
+  useEffect(() => {
+    api.health().then(setHealth).catch(() => setHealth(null));
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -99,7 +104,12 @@ export function PacketView() {
             )}
             <Conclusion packet={packet} />
             <div className="grid gap-6 lg:grid-cols-2">
-              <MemoryPanel facility={facility} decisions={packet.decisions} onChange={() => void load()} />
+              <MemoryPanel
+                facility={facility}
+                decisions={packet.decisions}
+                ephemeral={health?.ephemeralMemory ?? false}
+                onChange={() => void load()}
+              />
               <ZetarisPanel initial={packet.provenance.zetaris} />
             </div>
             <Disclaimers packet={packet} />
@@ -302,7 +312,17 @@ function Conclusion({ packet }: { packet: Packet }) {
   );
 }
 
-function MemoryPanel({ facility, decisions, onChange }: { facility: string; decisions: Decision[]; onChange: () => void }) {
+function MemoryPanel({
+  facility,
+  decisions,
+  ephemeral,
+  onChange,
+}: {
+  facility: string;
+  decisions: Decision[];
+  ephemeral: boolean;
+  onChange: () => void;
+}) {
   const [content, setContent] = useState("This hospital does not stock premixed dextrose bags.");
   const [keyword, setKeyword] = useState("premix");
   const [signedBy, setSignedBy] = useState("");
@@ -331,6 +351,12 @@ function MemoryPanel({ facility, decisions, onChange }: { facility: string; deci
       <p className="mt-2.5 max-w-[60ch] text-sm text-quiet">
         One decision from a pharmacist, stored with its source and applied to every later packet.
       </p>
+      {ephemeral && (
+        <p className="mt-2 max-w-[60ch] text-xs leading-relaxed text-short">
+          This deployment keeps memory on a serverless instance, so a decision lasts for this session rather than for
+          the facility. Run it locally for durable memory.
+        </p>
+      )}
 
       <div className="mt-5 space-y-2.5">
         <label htmlFor="decision" className="sr-only">
@@ -400,7 +426,7 @@ function MemoryPanel({ facility, decisions, onChange }: { facility: string; deci
 }
 
 function ZetarisPanel({ initial }: { initial: ZetarisProvenance | null }) {
-  const [status, setStatus] = useState<{ configured: boolean; base: string; reachable: boolean } | null>(null);
+  const [status, setStatus] = useState<{ configured: boolean; base: string; reachable: boolean; note: string | null } | null>(null);
   const [log, setLog] = useState<string[]>([]);
   const [run, setRun] = useState<ZetarisProvenance | null>(initial);
   const [busy, setBusy] = useState(false);
@@ -444,6 +470,8 @@ function ZetarisPanel({ initial }: { initial: ZetarisProvenance | null }) {
           "status unknown"
         )}
       </p>
+
+      {status?.note && <p className="mt-2 max-w-[60ch] text-xs leading-relaxed text-short">{status.note}</p>}
 
       <div className="mt-5 flex flex-wrap gap-2.5">
         <button

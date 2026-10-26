@@ -86,10 +86,14 @@ export class ZetarisClient {
     return (text ? JSON.parse(text) : null) as T;
   }
 
+  // Kept short: a hosted deployment cannot reach a local instance and must not hang on it.
   async reachable(): Promise<boolean> {
     if (!this.configured) return false;
     try {
-      await this.run("SELECT 1 AS one", 1);
+      await Promise.race([
+        this.run("SELECT 1 AS one", 1),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 6000)),
+      ]);
       return true;
     } catch {
       return false;
