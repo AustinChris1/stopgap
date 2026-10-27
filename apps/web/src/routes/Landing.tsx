@@ -82,22 +82,23 @@ export function Landing() {
       <section className="border-y hairline bg-white/40">
         <div className="mx-auto max-w-6xl px-4 py-16">
           <p className="max-w-[38ch] font-display text-3xl leading-[1.15] tracking-[-0.02em] sm:text-5xl">
-            US hospitals spent <span className="tabular">20 million</span> hours managing drug shortages in a single
-            year.
+            US hospitals spent roughly <span className="tabular">20 million</span> hours managing drug shortages in
+            2023.
           </p>
-          <p className="mt-4 text-sm text-quiet">Vizient survey of 132 health systems, published June 2025</p>
+          <p className="mt-4 text-sm text-quiet">Vizient survey of 132 health systems, released 17 June 2025</p>
 
           <dl className="mt-12 grid gap-x-16 gap-y-6 border-t hairline pt-6 sm:grid-cols-2">
             <div className="flex items-baseline gap-3">
-              <dt className="shrink-0 font-display text-xl font-semibold tabular">1,141</dt>
-              <dd className="max-w-[36ch] text-sm leading-relaxed text-quiet">
-                shortage records in the FDA file, the one this page just read
+              <dt className="shrink-0 font-display text-xl font-semibold tabular">69.7%</dt>
+              <dd className="max-w-[40ch] text-sm leading-relaxed text-quiet">
+                of hospital pharmacy professionals still track shortages on spreadsheets. Bluesight surveyed 437 of
+                them in January and February 2026.
               </dd>
             </div>
             <div className="flex items-baseline gap-3">
-              <dt className="shrink-0 font-display text-xl font-semibold tabular">69.7%</dt>
-              <dd className="max-w-[36ch] text-sm leading-relaxed text-quiet">
-                of hospital pharmacists still track shortages on spreadsheets
+              <dt className="shrink-0 font-display text-xl font-semibold tabular">$900M</dt>
+              <dd className="max-w-[40ch] text-sm leading-relaxed text-quiet">
+                the labour cost of those hours, from the same Vizient survey
               </dd>
             </div>
           </dl>

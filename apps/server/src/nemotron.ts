@@ -9,6 +9,7 @@ export type NemotronResult =
   | null;
 
 // Hosted Nemotron on build.nvidia.com, for the refusal sentence only.
+// Capped under the 30s serverless limit so a slow call reports rather than being killed.
 // The 3.5 models reason by default and spend the whole budget on reasoning_content,
 // leaving content empty, so thinking is turned off for this one-sentence task.
 export async function refusalSentence(context: string): Promise<NemotronResult> {
@@ -29,7 +30,7 @@ export async function refusalSentence(context: string): Promise<NemotronResult> 
           { role: "user", content: context },
         ],
       }),
-      signal: AbortSignal.timeout(45_000),
+      signal: AbortSignal.timeout(22_000),
     });
     if (!res.ok) return { ok: false, model, error: `HTTP ${res.status} ${(await res.text()).slice(0, 140)}` };
     const d = (await res.json()) as {

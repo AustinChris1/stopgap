@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { AlertCircle, Brain, Check, Database, ExternalLink, Loader2, RefreshCw, Trash2 } from "lucide-react";
+import { AlertCircle, Ban, Brain, Check, CircleCheck, Database, ExternalLink, Loader2, RefreshCw, Trash2 } from "lucide-react";
 import { api, type Decision, type Health, type Packet, type SupplyLine, type ZetarisProvenance, type ZetarisStatus } from "../lib/api.ts";
 import { Wordmark } from "../components/Logo.tsx";
 import { SupplyLadder } from "../components/SupplyLadder.tsx";
+import { BagGlyph, FormGlyph, VialGlyph } from "../components/Glyphs.tsx";
 
 export function PacketView() {
   const [facility, setFacility] = useState("default");
@@ -84,6 +85,7 @@ export function PacketView() {
         {packet && (
           <>
             <Provenance packet={packet} />
+            <Summary packet={packet} />
             <section>
               <SectionLabel>Where the shortage sits</SectionLabel>
               <p className="mt-1.5 max-w-[70ch] text-sm text-quiet">
@@ -98,8 +100,8 @@ export function PacketView() {
             </section>
             <PinRow line={packet.pin} />
             <Group
-              title="Same concentration, other labeler"
-              note="Matched on the concentration printed on each openFDA row."
+              title="Same concentration, other package"
+              note="Matched on the concentration printed on each openFDA row. Some share the pinned labeler."
               lines={packet.sameConcentration}
             />
             <Group
@@ -142,6 +144,42 @@ function SectionLabel({ children, count }: { children: React.ReactNode; count?: 
   );
 }
 
+function Summary({ packet }: { packet: Packet }) {
+  const all = [packet.pin, ...packet.sameConcentration, ...packet.otherPresentations, ...packet.excluded];
+  const vials = all.filter((l) => !l.isPremix);
+  const bags = all.filter((l) => l.isPremix);
+  const available = all.filter((l) => /^available$/i.test(l.availability));
+
+  const tiles = [
+    { glyph: <VialGlyph className="h-8 w-8" />, n: vials.length, label: "concentrate vials reported" },
+    { glyph: <BagGlyph className="h-8 w-8" />, n: bags.length, label: "premixed bags, a different form" },
+    { glyph: <CircleCheck className="h-8 w-8" strokeWidth={1.4} />, n: available.length, label: "packages reported available" },
+    { glyph: <Ban className="h-8 w-8" strokeWidth={1.4} />, n: packet.excluded.length, label: "excluded by a stored decision" },
+  ];
+
+  return (
+    <section>
+      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {tiles.map((t, i) => (
+          <motion.li
+            key={t.label}
+            initial={{ y: 8 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.4, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-start gap-4 border hairline bg-white p-5"
+          >
+            <span className="shrink-0 text-ink/70">{t.glyph}</span>
+            <div>
+              <p className="font-display text-3xl font-semibold leading-none tabular">{t.n}</p>
+              <p className="mt-1.5 text-xs leading-snug text-quiet">{t.label}</p>
+            </div>
+          </motion.li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function Provenance({ packet }: { packet: Packet }) {
   const p = packet.provenance;
   return (
@@ -166,7 +204,7 @@ function Provenance({ packet }: { packet: Packet }) {
 function PinRow({ line }: { line: SupplyLine }) {
   return (
     <section>
-      <SectionLabel>In shortage at this facility</SectionLabel>
+      <SectionLabel>Pinned shortage row</SectionLabel>
       <div className="mt-4 border hairline border-l-short bg-white p-6">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
           <h3 className="min-w-0 break-words font-display text-2xl font-semibold tracking-[-0.02em]">
@@ -211,36 +249,43 @@ function Group({ title, note, lines, muted = false }: { title: string; note: str
                 transition={{ duration: 0.25 }}
                 className="p-5"
               >
-                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1.5">
+                <div className="flex gap-4">
+                  <FormGlyph isPremix={l.isPremix} className="mt-0.5 h-9 w-9 shrink-0 text-ink/70" />
                   <div className="min-w-0 flex-1">
-                    <p className="break-words font-medium">{l.labeler}</p>
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1.5">
+                      <p className="break-words font-medium">{l.labeler}</p>
+                      <Availability value={l.availability} />
+                    </div>
                     <p className="mt-0.5 max-w-[70ch] break-words text-sm text-quiet">{l.presentation}</p>
+
+                    <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                      <Chip>{l.ndc}</Chip>
+                      {l.concentrationMgPerMl !== null && <Chip>{l.concentrationMgPerMl} mg/mL</Chip>}
+                      {l.updateDate && <Chip>upd {l.updateDate}</Chip>}
+                      {l.rxcuiExact && <Chip>RxCUI {l.rxcuiExact}</Chip>}
+                      {l.label?.labelUrl && (
+                        <a
+                          href={l.label.labelUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 rounded-full border border-rule px-2.5 py-1 text-xs font-medium text-short transition-colors hover:bg-paper"
+                        >
+                          FDA label <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
+
+                    {l.resupplyNote && (
+                      <p className="mt-3 max-w-[70ch] text-xs leading-relaxed text-ink/75">{l.resupplyNote}</p>
+                    )}
+                    {l.excludedBy && (
+                      <p className="mt-3 border-l hairline pl-3 text-xs leading-relaxed">
+                        <span className="text-quiet">Excluded by {l.excludedBy.decisionId}. </span>
+                        {l.excludedBy.content}
+                      </p>
+                    )}
                   </div>
-                  <Availability value={l.availability} />
                 </div>
-                <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1.5 font-mono text-xs tabular text-quiet">
-                  <span>NDC {l.ndc}</span>
-                  {l.updateDate && <span>updated {l.updateDate}</span>}
-                  {l.rxcuiExact && <span>RxCUI {l.rxcuiExact}</span>}
-                  {l.label?.labelUrl && (
-                    <a
-                      href={l.label.labelUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1 font-sans text-short hover:underline"
-                    >
-                      FDA label <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
-                </div>
-                {l.conceptName && <p className="mt-2 break-words text-xs text-quiet">RxNorm concept: {l.conceptName}</p>}
-                {l.resupplyNote && <p className="mt-2 max-w-[70ch] text-xs leading-relaxed text-ink/75">{l.resupplyNote}</p>}
-                {l.excludedBy && (
-                  <p className="mt-3 border-l hairline pl-3 text-xs leading-relaxed">
-                    <span className="text-quiet">Excluded by {l.excludedBy.decisionId}. </span>
-                    {l.excludedBy.content}
-                  </p>
-                )}
               </motion.li>
             ))}
           </AnimatePresence>
@@ -250,11 +295,29 @@ function Group({ title, note, lines, muted = false }: { title: string; note: str
   );
 }
 
+function Chip({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-rule px-2.5 py-1 font-mono text-xs tabular text-quiet">
+      {children}
+    </span>
+  );
+}
+
 function Availability({ value }: { value: string }) {
   const available = /^available$/i.test(value);
+  const limited = /limited/i.test(value);
+  const tone = available ? "border-supply/35 text-supply" : "border-short/35 text-short";
   return (
-    <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${available ? "text-supply" : "text-short"}`}>
-      <span className="inline-block h-1.5 w-1.5 rounded-full bg-current" />
+    <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${tone}`}>
+      {available ? (
+        <span className="inline-block h-2 w-2 rounded-full bg-current" />
+      ) : limited ? (
+        <span className="inline-flex h-2 w-2 items-center justify-center rounded-full border-[1.5px] border-current">
+          <span className="h-[3px] w-[3px] rounded-full bg-current" />
+        </span>
+      ) : (
+        <span className="inline-block h-2 w-2 rounded-full border-[1.5px] border-current" />
+      )}
       {value}
     </span>
   );
@@ -499,7 +562,7 @@ function ZetarisPanel({ initial }: { initial: ZetarisProvenance | null }) {
           disabled={busy}
           className="border hairline px-4 py-2.5 text-xs font-medium transition-colors hover:bg-paper disabled:opacity-50"
         >
-          Run the join
+          Run the query
         </button>
       </div>
 

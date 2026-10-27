@@ -1,6 +1,7 @@
 -- Adapted from the verified PokeAPI create in zetaris/getting-started
 -- (open_data/rest_apis/sql/non_rate_limited/02_pokeapi_create.sql).
--- One live REST source. Nothing is copied; an uncached query refetches the endpoint.
+-- One live REST source. CACHE TABLE below pins the response for the session so the
+-- demo query is stable; drop it to refetch the endpoint on every query.
 CREATE LIGHTNING DATABASE openfda DESCRIBE BY "FDA drug shortages, live REST";
 
 CREATE LIGHTNING REST TABLE dopamine_shortages_raw FROM openfda REQUEST(

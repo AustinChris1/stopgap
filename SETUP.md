@@ -79,7 +79,7 @@ prototyping. There is no card.
 
 ```
 NVIDIA_API_KEY=nvapi-...
-NVIDIA_MODEL=nvidia/nemotron-3-nano-30b-a3b
+NVIDIA_MODEL=nvidia/nemotron-3.5-lightning-30b-a3b
 ```
 
 If the model id 404s, open the model page on build.nvidia.com and copy the exact id shown in its
