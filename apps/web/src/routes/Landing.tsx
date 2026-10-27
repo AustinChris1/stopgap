@@ -1,25 +1,31 @@
-import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { api, type Packet } from "../lib/api.ts";
 import { Mark, Wordmark } from "../components/Logo.tsx";
+import { Pipeline } from "../components/Pipeline.tsx";
+import { SupplyLadder } from "../components/SupplyLadder.tsx";
 
-const STEPS = [
-  {
-    title: "One live source, read in place",
-    body: "Zetaris registers the FDA shortage endpoint as a table and queries it where it sits. Nothing is copied, and an uncached query refetches it, so a judge can re-run the same call.",
-  },
-  {
-    title: "One decision, remembered",
-    body: "Meterless stores what the pharmacy already ruled on, with the name of whoever entered it. The next packet drops those rows into their own section and names the decision that removed them.",
-  },
-  {
-    title: "The clinical line stays blank",
-    body: "Rows are grouped by the concentration printed on each one, so a concentrate vial never merges with a premixed bag. No substitute is named. A pharmacist signs.",
-  },
+const SOURCES = [
+  { name: "openFDA", role: "shortage status, reason, resupply notes" },
+  { name: "RxNorm", role: "one exact clinical drug concept per package" },
+  { name: "DailyMed", role: "the citable FDA label for each row" },
+];
+
+const STACK = [
+  { name: "Zetaris", role: "the FDA endpoint as a table, queried in place" },
+  { name: "Meterless", role: "what the pharmacy already decided, remembered" },
+  { name: "NVIDIA Nemotron", role: "drafts the one line that refuses to advise" },
 ];
 
 export function Landing() {
-  const reduce = useReducedMotion();
+  const [preview, setPreview] = useState<Packet | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    api.preview().then(setPreview).catch(() => setFailed(true));
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -34,7 +40,7 @@ export function Landing() {
         </Link>
       </header>
 
-      <section className="mx-auto max-w-6xl px-4 pb-24 pt-12 sm:pt-20">
+      <section className="mx-auto max-w-6xl px-4 pb-20 pt-12 sm:pt-16">
         <h1 className="max-w-3xl font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.03em] sm:text-7xl">
           A drug goes short. The paperwork starts.
         </h1>
@@ -43,14 +49,41 @@ export function Landing() {
           substitute.
         </p>
 
-        <GapDiagram reduce={Boolean(reduce)} />
+        <div className="mt-14">
+          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <h2 className="text-sm font-semibold">Dopamine, read from the FDA file just now</h2>
+            {preview && (
+              <p className="text-xs text-quiet">
+                file dated <span className="font-mono tabular">{preview.provenance.openFdaLastUpdated}</span> ·{" "}
+                <span className="font-mono tabular">{preview.provenance.openFdaRowsReturned}</span> packages
+              </p>
+            )}
+          </div>
+
+          {preview ? (
+            <SupplyLadder
+              lines={[preview.pin, ...preview.sameConcentration, ...preview.otherPresentations, ...preview.excluded]}
+              pinNdc={preview.pin.ndc}
+            />
+          ) : (
+            <div className="flex items-center gap-3 border hairline bg-white px-5 py-10 text-sm text-quiet">
+              {failed ? (
+                "The live packet could not be read. The app itself still runs; open a packet to see the error."
+              ) : (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Reading the FDA shortage file
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </section>
 
       <section className="border-y hairline bg-white/40">
         <div className="mx-auto max-w-6xl px-4 py-16">
           <p className="max-w-[38ch] font-display text-3xl leading-[1.15] tracking-[-0.02em] sm:text-5xl">
-            US hospitals spent{" "}
-            <span className="tabular">20 million</span> hours managing drug shortages in a single year.
+            US hospitals spent <span className="tabular">20 million</span> hours managing drug shortages in a single
+            year.
           </p>
           <p className="mt-4 text-sm text-quiet">Vizient survey of 132 health systems, published June 2025</p>
 
@@ -58,7 +91,7 @@ export function Landing() {
             <div className="flex items-baseline gap-3">
               <dt className="shrink-0 font-display text-xl font-semibold tabular">1,141</dt>
               <dd className="max-w-[36ch] text-sm leading-relaxed text-quiet">
-                shortage records currently in the FDA file, read live by this app
+                shortage records in the FDA file, the one this page just read
               </dd>
             </div>
             <div className="flex items-baseline gap-3">
@@ -72,18 +105,13 @@ export function Landing() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-20">
-        <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">How one packet is built</h2>
-        <dl className="mt-10 border-t hairline">
-          {STEPS.map((s) => (
-            <div key={s.title} className="grid gap-x-12 gap-y-2 border-b hairline py-7 sm:grid-cols-[22rem_1fr]">
-              <dt className="font-display text-xl font-semibold leading-snug">{s.title}</dt>
-              <dd className="max-w-[62ch] text-sm leading-relaxed text-quiet">{s.body}</dd>
-            </div>
-          ))}
-        </dl>
+        <h2 className="mb-10 font-display text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">
+          How one packet is built
+        </h2>
+        <Pipeline />
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-24">
+      <section className="mx-auto max-w-6xl px-4 pb-20">
         <div className="border hairline bg-white p-8 sm:p-14">
           <p className="max-w-[26ch] font-display text-3xl leading-[1.1] tracking-[-0.02em] sm:text-5xl">
             It will not tell you what to give the patient.
@@ -102,6 +130,13 @@ export function Landing() {
               <p className="mt-2.5 text-xs text-quiet">Date</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-24">
+        <div className="grid gap-x-16 gap-y-12 sm:grid-cols-2">
+          <Column title="Every row comes from" items={SOURCES} />
+          <Column title="Built on" items={STACK} />
         </div>
       </section>
 
@@ -124,37 +159,25 @@ export function Landing() {
   );
 }
 
-// The one authored moment: supply closes in from both sides and stops, leaving the signature rule.
-function GapDiagram({ reduce }: { reduce: boolean }) {
-  const ease = [0.16, 1, 0.3, 1] as const;
-  // Opacity stays at 1 so a failed or skipped animation still leaves the bars on screen.
-  const bar = (origin: "left" | "right") => ({
-    initial: reduce ? false : { scaleX: 0.28 },
-    animate: { scaleX: 1 },
-    transition: { duration: 1.1, delay: 0.25, ease },
-    style: { transformOrigin: origin },
-    className: "h-16 flex-1 rounded-sm bg-ink",
-  });
-
+function Column({ title, items }: { title: string; items: { name: string; role: string }[] }) {
   return (
-    <div className="mt-20 border hairline bg-white p-6 sm:p-10">
-      <div className="flex items-center gap-4 sm:gap-6">
-        <motion.div {...bar("left")} />
-        <div className="w-20 shrink-0 text-center sm:w-28">
+    <div>
+      <h2 className="text-sm font-semibold">{title}</h2>
+      <dl className="mt-5 border-t hairline">
+        {items.map((s, i) => (
           <motion.div
-            initial={reduce ? false : { scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.6, delay: 0.95, ease }}
-            className="h-px w-full bg-short"
-          />
-          <p className="mt-2.5 text-xs text-short">signature</p>
-        </div>
-        <motion.div {...bar("right")} />
-      </div>
-      <div className="mt-6 flex justify-between text-xs text-quiet">
-        <span>Reported supply</span>
-        <span>Reported supply</span>
-      </div>
+            key={s.name}
+            initial={{ opacity: 0, y: 6 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.4, delay: i * 0.06 }}
+            className="grid grid-cols-[9rem_1fr] gap-4 border-b hairline py-4"
+          >
+            <dt className="font-display text-base font-semibold">{s.name}</dt>
+            <dd className="text-xs leading-relaxed text-quiet">{s.role}</dd>
+          </motion.div>
+        ))}
+      </dl>
     </div>
   );
 }

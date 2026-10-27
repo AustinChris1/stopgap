@@ -91,6 +91,7 @@ export interface Health {
 export const api = {
   health: () => json<Health>("/api/health"),
   packet: (facility: string) => json<Packet>(`/api/packet?facility=${encodeURIComponent(facility)}`),
+  preview: () => json<Packet>("/api/packet?enrich=0&facility=__preview__"),
   decisions: (facility: string) => json<Decision[]>(`/api/decisions?facility=${encodeURIComponent(facility)}`),
   addDecision: (body: { content: string; excludeKeyword?: string; facility: string; signedBy: string }) =>
     json<Decision>("/api/decisions", { method: "POST", body: JSON.stringify(body) }),
