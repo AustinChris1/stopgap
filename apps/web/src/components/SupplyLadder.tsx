@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import type { SupplyLine } from "../lib/api.ts";
 
 // Status colors, validated for CVD separation and chroma against a white surface.
@@ -47,6 +48,8 @@ function groupByConcentration(lines: SupplyLine[]) {
 
 export function SupplyLadder({ lines, pinNdc }: { lines: SupplyLine[]; pinNdc: string }) {
   const [hover, setHover] = useState<SupplyLine | null>(null);
+  const reduce = useReducedMotion();
+  let order = 0;
 
   const plotted = lines.filter((l) => l.concentrationMgPerMl !== null);
   if (plotted.length === 0) return null;
@@ -125,7 +128,17 @@ export function SupplyLadder({ lines, pinNdc }: { lines: SupplyLine[]; pinNdc: s
                   const state = stateOf(l);
                   const pinned = l.ndc === pinNdc;
                   return (
-                    <g key={l.ndc} onMouseEnter={() => setHover(l)} onMouseLeave={() => setHover(null)}>
+                    <motion.g
+                      key={l.ndc}
+                      onMouseEnter={() => setHover(l)}
+                      onMouseLeave={() => setHover(null)}
+                      // Scale only: a skipped animation leaves a smaller dot, never a missing one.
+                      initial={reduce ? false : { scale: 0.45 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 0.5, delay: 0.1 + order++ * 0.035, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ transformOrigin: `${cx}px ${cy}px` }}
+                      whileHover={{ scale: 1.25 }}
+                    >
                       <circle cx={cx} cy={cy} r={DOT + 8} fill="transparent" />
                       <circle cx={cx} cy={cy} r={DOT + 2.5} fill="#ffffff" />
                       <g transform={`translate(${cx} ${cy})`}>
@@ -140,7 +153,7 @@ export function SupplyLadder({ lines, pinNdc }: { lines: SupplyLine[]; pinNdc: s
                         </>
                       )}
                       <title>{`${l.labeler} · ${l.ndc} · ${l.availability}`}</title>
-                    </g>
+                    </motion.g>
                   );
                 }),
               )}

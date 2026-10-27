@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { Database, Layers, BrainCircuit, PenLine } from "lucide-react";
 
 const INK = "#15191c";
 const RULE = "#d8d2c4";
@@ -6,10 +7,10 @@ const SHORT = "#9a5b16";
 const SUPPLY = "#0f7a5a";
 
 const STAGES = [
-  { t: "Read in place", d: "The FDA endpoint is a Zetaris table, queried where it sits." },
-  { t: "Split by concentration", d: "A vial never merges with a premixed bag." },
-  { t: "Apply what was decided", d: "Meterless drops rows the pharmacy already ruled out." },
-  { t: "Leave the line blank", d: "No substitute is named. A pharmacist signs." },
+  { icon: Database, t: "Read in place", d: "The FDA endpoint is a Zetaris table, queried where it sits." },
+  { icon: Layers, t: "Split by concentration", d: "A vial never merges with a premixed bag." },
+  { icon: BrainCircuit, t: "Apply what was decided", d: "Meterless drops rows the pharmacy already ruled out." },
+  { icon: PenLine, t: "Leave the line blank", d: "No substitute is named. A pharmacist signs." },
 ];
 
 // The mechanic drawn rather than described: rows arrive, separate, thin out, and stop at a rule.
@@ -127,6 +128,7 @@ export function Pipeline() {
       <dl className="mt-6 grid gap-x-6 gap-y-6 sm:grid-cols-4">
         {STAGES.map((s) => (
           <div key={s.t}>
+            <s.icon className="mb-2.5 h-4 w-4 text-short" strokeWidth={1.75} aria-hidden="true" />
             <dt className="text-sm font-semibold">{s.t}</dt>
             <dd className="mt-1.5 text-xs leading-relaxed text-quiet">{s.d}</dd>
           </div>
