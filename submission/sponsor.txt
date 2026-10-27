@@ -1,0 +1,27 @@
+ZETARIS — the federated data layer.
+
+Zetaris registers the FDA shortage endpoint as a single Lightning REST table, and a SchemaStore view explodes `results` so each package becomes a row, split by presentation into concentrate vials and premixed bags. The query runs in place; nothing is copied into a warehouse. The SQL is in zetaris/sql in the repo, adapted from the verified PokeAPI create in zetaris/getting-started.
+
+What was unique about our use: the join key never had to exist. We went in expecting to need a second source keyed on RxCUI to separate the vial from the bag, because that is the distinction the whole product depends on. The presentation string already on each row carried it, and one REST table plus explode(results) was the entire data layer. Two statements and a view.
+
+A real run against a local instance is committed at zetaris/last-run.json: 11 rows, recorded 2026-10-27, with the column names taken from the query's own aliases because the UI proxy returns rows without them. A hosted deployment cannot reach an instance running on a laptop, so the live site serves that captured run labelled as a recorded run, never as live, and the local build shows the Register source and Run the query buttons working against the instance.
+
+One honest note: the registration runs CACHE TABLE, which pins the response for the session so the demo is reproducible. The packet itself makes its own independent live call to the same endpoint, so the two are separate paths to the same file.
+
+METERLESS — the memory.
+
+The H-MEM reference engine is vendored and holds the pharmacy's own decisions. A pharmacist enters one, for example "this hospital does not stock premixed dextrose bags", with their name recorded as the source and an append-only trust ledger entry behind it. The next packet applies it: the seven premixed rows move out of the supply list into their own section, and each one names the decision id that removed it.
+
+What was unique about our use: the distinction it protects. A row excluded by a pharmacy decision is not a row that is out of stock, and the packet never lets those two look alike. The agent does not silently drop rows; it says which human decision removed each one, and the decision can be retired.
+
+NVIDIA NEMOTRON — one sentence, and only one.
+
+Nemotron drafts the refusal line that tells the reader the packet reports supply and the clinical decision belongs to the pharmacist. It runs on the hosted endpoint at build.nvidia.com using nvidia/nemotron-3.5-lightning-30b-a3b.
+
+Two things we had to learn. The model ids in circulation are wrong; only the live /v1/models catalogue is reliable. And the 3.5 family reasons by default, spending the entire token budget on reasoning_content and returning an empty message, so the call sets chat_template_kwargs {thinking: false}. With no key, or on any error, the sentence is omitted and the omission is printed on the page. It is never fabricated. The only thing the language model is allowed to produce is the sentence that declines to advise.
+
+SPACEX AI / CURSOR — not used, so not claimed.
+
+ARCHITECTURE
+
+A pnpm workspace. The server is Hono and runs both as a local node server and as one Vercel serverless function, so the deployed site and the local one serve identical routes. All three data sources are keyed on package NDC, never on drug name.
