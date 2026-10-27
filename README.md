@@ -81,11 +81,21 @@ otherwise:
 - **Memory** falls back to `/tmp`, which is per-instance and not shared, so a stored decision
   lasts for the session rather than for the facility. Run locally for durable memory.
 
+## Submission
+
+| File | What it is |
+|---|---|
+| [SUBMISSION.md](SUBMISSION.md) | the written explanation, including how each sponsor technology was used |
+| [deck/Stopgap-deck.pdf](deck/Stopgap-deck.pdf) | twelve slides; `deck/index.html` is the same deck in a browser |
+| [DEMO.md](DEMO.md) | the recording script, with the rows as the file reports them |
+| [zetaris/last-run.json](zetaris/last-run.json) | a real Zetaris run, 11 rows, captured 27 October 2026 |
+
 ## Layout
 
 ```
 apps/server   packet engine, H-MEM memory, Zetaris client, Nemotron hook, HTTP API
 apps/web      landing route and the packet route
 zetaris/sql   Lightning REST table registration and the grouped supply query
+deck/         the submission deck, its slide sources and a build script
 vendor/hmem   Meterless H-MEM reference engine, vendored via degit
 ```

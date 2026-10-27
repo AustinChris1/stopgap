@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stopgap — Open Agent Hackathon 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #2a2724; font-family: 'IBM Plex Sans', Arial, sans-serif; }
+  main { display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 24px; }
+  section {
+    position: relative; width: 1920px; height: 1080px; overflow: hidden;
+    transform-origin: top left; box-shadow: 0 8px 40px rgba(0,0,0,.35);
+  }
+  .frame { position: relative; overflow: hidden; }
+  aside { display: none; }
+  h1, h2, h3, p, ul, ol, table { margin: 0; }
+  ul, ol { padding-left: 1.2em; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { padding: 14px 20px; border-bottom: 1px solid rgba(128,128,128,.35); text-align: left; }
+  x-shape, x-connector { display: block; }
+  x-shape[kind="arrow-right"] {
+    clip-path: polygon(0 28%, 60% 28%, 60% 0, 100% 50%, 60% 100%, 60% 72%, 0 72%);
+  }
+  x-connector { border-top: 2px solid currentColor; height: 0; align-self: center; }
+  @media print {
+    body { background: #fff; }
+    main { padding: 0; gap: 0; }
+    .frame { page-break-after: always; box-shadow: none; }
+    section { box-shadow: none; }
+    @page { size: 1920px 1080px; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<main id="deck">
+<section id="cover" data-transition="fade" style="background:#f6f3ec;color:#15191c;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between">
+<div style="display:flex;align-items:center;gap:20px">
+<svg aria-label="Stopgap mark: two supply bars stopping short of each other, leaving the signature rule open in the gap" width="72" height="72"><rect x="10" y="27" width="20" height="18" rx="4" fill="#15191c"></rect><rect x="42" y="27" width="20" height="18" rx="4" fill="#15191c"></rect><rect x="32" y="54" width="9" height="3" rx="1.5" fill="#9a5b16"></rect></svg>
+<p style="font-family:'Fraunces', Georgia, serif;font-size:44px;font-weight:600">Stopgap</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:32px">
+<h1 style="font-family:'Fraunces', Georgia, serif;font-size:132px;font-weight:600;line-height:1.02;letter-spacing:-3px">A drug goes short.<br>The paperwork starts.</h1>
+<p style="font-size:38px;line-height:1.45;color:#4f4c45;width:1180px">Stopgap drafts the sourced supply packet a hospital pharmacist needs, cites every row, and refuses to name a substitute.</p>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;justify-content:space-between">
+<p style="font-size:24px;color:#6d6a62">Open Agent Hackathon 2026 · Track 02, The Agent That Can Explain Why</p>
+<p style="font-size:24px;color:#9a5b16">stopgap-rx.vercel.app</p>
+</div>
+<aside>Stopgap. One sentence: when a drug goes into shortage, a pharmacist builds the supply picture by hand, and this drafts it for them without ever telling them what to give.</aside>
+</section>
+<section id="problem" data-transition="fade" style="background:#f6f3ec;color:#15191c;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between;gap:56px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:76px;font-weight:600;line-height:1.1;letter-spacing:-1.5px;width:1400px">A shortage notice is not an answer. It is the start of an afternoon.</h2>
+<div style="display:flex;gap:40px">
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#ffffff;padding:44px;border:1px solid #d8d2c4;border-radius:16px">
+<h3 style="font-family:'Fraunces', Georgia, serif;font-size:66px;font-weight:600;color:#9a5b16">20M</h3>
+<p style="font-size:28px;line-height:1.45;color:#4f4c45">hours US hospitals spent managing drug shortages in 2023</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#ffffff;padding:44px;border:1px solid #d8d2c4;border-radius:16px">
+<h3 style="font-family:'Fraunces', Georgia, serif;font-size:66px;font-weight:600;color:#9a5b16">$900M</h3>
+<p style="font-size:28px;line-height:1.45;color:#4f4c45">the labour cost of those hours, across 132 health systems</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#ffffff;padding:44px;border:1px solid #d8d2c4;border-radius:16px">
+<h3 style="font-family:'Fraunces', Georgia, serif;font-size:66px;font-weight:600;color:#9a5b16">69.7%</h3>
+<p style="font-size:28px;line-height:1.45;color:#4f4c45">of hospital pharmacy professionals still track shortages on spreadsheets</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;font-size:24px;color:#6d6a62">Vizient, released 17 June 2025 · Bluesight, 437 respondents surveyed January–February 2026</p>
+<aside>The pharmacist opens the FDA shortage file, then each manufacturer's resupply note, then the formulary, and assembles a picture by hand. Vizient measured that at roughly twenty million hours in 2023.</aside>
+</section>
+<section id="today" data-transition="fade" style="background:#15191c;color:#f6f3ec;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between;gap:48px">
+<div style="display:flex;flex-direction:column;gap:20px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:72px;font-weight:600;line-height:1.1;letter-spacing:-1.5px">One ingredient, on the day we built it</h2>
+<p style="font-size:32px;line-height:1.45;color:#bdb8ab;width:1500px">Dopamine, read live from the FDA shortage file on 27 October 2026. Eleven packages. Four are the concentrate; seven are premixed bags at entirely different concentrations.</p>
+</div>
+<table style="font-family:'IBM Plex Sans', Arial, sans-serif;font-size:28px;color:#f6f3ec">
+<tr><th style="width:22%;text-align:left;padding:16px 20px">Package NDC</th><th style="width:20%;text-align:left">Labeler</th><th style="width:26%;text-align:left">Status</th><th style="width:32%;text-align:left">What the file says</th></tr>
+<tr><td>0143-9254-25</td><td>Hikma</td><td style="color:#e0a86a">Unavailable</td><td>Resupply November 2026. The pinned row.</td></tr>
+<tr><td>0143-9252-25</td><td>Hikma</td><td style="color:#e0a86a">Unavailable</td><td>Backorder into February 2027</td></tr>
+<tr><td>0409-9104-20</td><td>Hospira</td><td style="color:#e0a86a">Limited</td><td>Recovery estimated March 2027</td></tr>
+<tr><td>0409-5820-01</td><td>Hospira</td><td style="color:#7fc9a9">Available</td><td>Updated 21 October 2026</td></tr>
+</table>
+<p style="position:absolute;left:128px;bottom:64px;font-size:24px;color:#8f8a7e">Two of the four share the pinned labeler. Only one package is fully available.</p>
+<aside>This is the whole point. Same ingredient, same concentration, and still two of the four are from the same maker that is already short, and a third is only limited.</aside>
+</section>
+<section id="packet" data-section="What Stopgap produces and the rule that keeps it safe." data-transition="fade" style="background:#f6f3ec;color:#15191c;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;gap:64px;align-items:center">
+<div style="width:620px;display:flex;flex-direction:column;gap:28px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:72px;font-weight:600;line-height:1.1;letter-spacing:-1.5px">The packet</h2>
+<p style="font-size:30px;line-height:1.5;color:#4f4c45">Every row carries its labeler, package NDC, availability, the date the FDA row changed, the manufacturer's own resupply note, its RxNorm concept and a link to its FDA label on DailyMed.</p>
+<p style="font-size:30px;line-height:1.5;color:#4f4c45">A judge can click any citation and land on the source.</p>
+<p style="font-size:28px;line-height:1.5;color:#9a5b16">The page reads the file when you open it. Press re-query and the timestamp moves.</p>
+</div>
+<img src="img/hero.png" alt="The Stopgap landing page showing eleven dopamine packages plotted by concentration" style="width:980px;height:784px;object-fit:contain;border:1px solid #d8d2c4;border-radius:16px">
+<aside>Point at the provenance bar first: file date, row count, time of the re-query. Then the chart.</aside>
+</section>
+<section id="rule" data-transition="fade" style="background:#f6f3ec;color:#15191c;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between;gap:40px">
+<div style="display:flex;flex-direction:column;gap:18px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:72px;font-weight:600;line-height:1.1;letter-spacing:-1.5px">The rule that makes it safe</h2>
+<p style="font-size:32px;line-height:1.45;color:#4f4c45;width:1500px">Rows are split by the concentration printed on each individual row, so a 40 mg per mL concentrate vial never merges with a premixed dextrose bag. There is no ingredient-level join anywhere in the code, because an ingredient join merges exactly those two things.</p>
+</div>
+<img src="img/ladder.png" alt="A dot plot of the eleven packages: four concentrate vials clustered at 40 mg per mL, seven premixed bags spread across 0.8 to 3.2 mg per mL" style="width:1664px;height:360px;object-fit:contain;border:1px solid #d8d2c4;border-radius:16px;background:#ffffff">
+<p style="position:absolute;left:128px;bottom:64px;font-size:24px;color:#6d6a62">Availability carries three marks, not two colours, so the state survives colour blindness and printing.</p>
+<aside>The bags are 0.8 to 3.2 mg per mL. The vial is 40. They are fifty times apart. Any tool that groups by ingredient puts them in the same list.</aside>
+</section>
+<section id="refusal" data-transition="fade" style="background:#9a5b16;color:#fdf8f0;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between;gap:56px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:116px;font-weight:600;line-height:1.05;letter-spacing:-2.5px;width:1420px">It will not tell you what to give the patient.</h2>
+<div style="display:flex;flex-direction:column;gap:28px;width:1500px">
+<p style="font-size:34px;line-height:1.5">Same ingredient is not the same product. Route, indication, dosing and contraindications are not checked by anything here. The clinical conclusion field is empty by construction.</p>
+<div style="display:flex;align-items:flex-end;gap:56px">
+<div style="flex:1;display:flex;flex-direction:column;gap:14px"><hr style="color:#fdf8f0;border-top:2px solid #fdf8f0"><p style="font-size:26px;color:#f0dcc2">Pharmacist signature</p></div>
+<div style="width:380px;display:flex;flex-direction:column;gap:14px"><hr style="color:#fdf8f0;border-top:2px solid #fdf8f0"><p style="font-size:26px;color:#f0dcc2">Date</p></div>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;font-size:24px;color:#f0dcc2">openFDA's "do not rely on this for medical care" sentence and the NLM attribution are printed on the packet itself.</p>
+<aside>Hold on the blank signature line for three full seconds. That blank line is the product.</aside>
+</section>
+<section id="architecture" data-section="How the sponsor technologies were actually used." data-transition="fade" style="background:#f6f3ec;color:#15191c;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:72px;font-weight:600;line-height:1.1;letter-spacing:-1.5px">Architecture</h2>
+<div style="display:flex;gap:28px;align-items:stretch">
+<div style="width:380px;display:flex;flex-direction:column;gap:14px;background:#ffffff;padding:36px;border:1px solid #d8d2c4;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#9a5b16">Sources, keyed on package NDC</h3>
+<p style="font-size:26px;line-height:1.5;color:#4f4c45">openFDA shortages<br>RxNorm, via NLM RxNav<br>DailyMed labels</p>
+<p style="font-size:24px;line-height:1.45;color:#6d6a62">Never joined on drug name.</p>
+</div>
+<x-connector from="tl" style="width:56px;color:#9a5b16;border-width:2px"></x-connector>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#15191c;padding:36px;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#f6f3ec">Packet engine</h3>
+<p style="font-size:26px;line-height:1.5;color:#bdb8ab">Groups by the concentration printed on each row. Applies stored decisions. Leaves the clinical line empty.</p>
+<p style="font-size:24px;line-height:1.45;color:#8f8a7e">Hono, one codebase, served both as a local node server and as one Vercel function.</p>
+</div>
+<x-connector from="tl" style="width:56px;color:#9a5b16;border-width:2px"></x-connector>
+<div style="width:380px;display:flex;flex-direction:column;gap:14px;background:#ffffff;padding:36px;border:1px solid #d8d2c4;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#9a5b16">The packet</h3>
+<p style="font-size:26px;line-height:1.5;color:#4f4c45">Cited rows, an excluded section that names its decision, and a blank signature.</p>
+</div>
+</div>
+<div style="display:flex;gap:28px">
+<div style="flex:1;background:#ffffff;padding:30px 36px;border:1px solid #d8d2c4;border-radius:16px"><p style="font-size:26px;line-height:1.45;color:#4f4c45"><b>Zetaris</b> registers the same FDA endpoint as a Lightning REST table and queries it in place, beside the engine.</p></div>
+<div style="flex:1;background:#ffffff;padding:30px 36px;border:1px solid #d8d2c4;border-radius:16px"><p style="font-size:26px;line-height:1.45;color:#4f4c45"><b>Meterless H-MEM</b> holds the pharmacy's own decisions and the ledger behind them.</p></div>
+<div style="flex:1;background:#ffffff;padding:30px 36px;border:1px solid #d8d2c4;border-radius:16px"><p style="font-size:26px;line-height:1.45;color:#4f4c45"><b>Nemotron</b> drafts one sentence: the refusal.</p></div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;font-size:24px;color:#6d6a62">A pnpm workspace. The deployed site and the local one serve identical routes.</p>
+<aside>Be honest here: Zetaris sits beside the packet rather than building it. Both read the same endpoint, independently.</aside>
+</section>
+<section id="zetaris" data-transition="fade" style="background:#f6f3ec;color:#15191c;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between;gap:44px">
+<div style="display:flex;flex-direction:column;gap:18px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:72px;font-weight:600;line-height:1.1;letter-spacing:-1.5px">Zetaris</h2>
+<p style="font-size:32px;line-height:1.45;color:#4f4c45;width:1540px">One Lightning REST table over the FDA endpoint, and a SchemaStore view that explodes <b>results</b> so each package becomes a row, split by presentation. Queried in place. Nothing copied into a warehouse.</p>
+</div>
+<div style="display:flex;gap:40px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#15191c;padding:40px;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#e0a86a">What surprised us</h3>
+<p style="font-size:30px;line-height:1.5;color:#f6f3ec">The join key never had to exist. We expected a second source keyed on RxCUI to separate the vial from the bag. The presentation string already on each row did it, and one REST table was the entire data layer.</p>
+</div>
+<div style="width:680px;display:flex;flex-direction:column;gap:16px;background:#ffffff;padding:40px;border:1px solid #d8d2c4;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#9a5b16">Verified, not described</h3>
+<p style="font-size:28px;line-height:1.5;color:#4f4c45">A real run against a local instance is committed in the repository: <b>11 rows</b>, recorded 27 October 2026.</p>
+<p style="font-size:26px;line-height:1.5;color:#6d6a62">A hosted deployment cannot reach a laptop, so the site serves that captured run labelled as recorded, never as live.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;font-size:24px;color:#6d6a62">The registration caches the response for the session so the demo is reproducible. The packet makes its own independent call to the same file.</p>
+<aside>Say the specific thing: we went in expecting to need a second source and a join key, and the data already carried the distinction.</aside>
+</section>
+<section id="meterless" data-transition="fade" style="background:#f6f3ec;color:#15191c;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between;gap:44px">
+<div style="display:flex;flex-direction:column;gap:18px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:72px;font-weight:600;line-height:1.1;letter-spacing:-1.5px">Meterless</h2>
+<p style="font-size:32px;line-height:1.45;color:#4f4c45;width:1540px">The H-MEM reference engine holds the pharmacy's own decisions, each with the name of whoever entered it and an append-only ledger entry behind it.</p>
+</div>
+<div style="display:flex;gap:28px;align-items:center">
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#ffffff;padding:40px;border:1px solid #d8d2c4;border-radius:16px">
+<h3 style="font-size:28px;font-weight:600;color:#6d6a62">Run one</h3>
+<p style="font-size:30px;line-height:1.45;color:#15191c">Seven premixed bags listed as other presentations.</p>
+</div>
+<x-shape kind="arrow-right" style="width:120px;height:56px;background:#9a5b16"></x-shape>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#ffffff;padding:40px;border:1px solid #d8d2c4;border-radius:16px">
+<h3 style="font-size:28px;font-weight:600;color:#6d6a62">A pharmacist decides</h3>
+<p style="font-size:30px;line-height:1.45;color:#15191c">“This hospital does not stock premixed dextrose bags.”</p>
+</div>
+<x-shape kind="arrow-right" style="width:120px;height:56px;background:#9a5b16"></x-shape>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#15191c;padding:40px;border-radius:16px">
+<h3 style="font-size:28px;font-weight:600;color:#e0a86a">Run two</h3>
+<p style="font-size:30px;line-height:1.45;color:#f6f3ec">All seven move, each naming the decision id that removed it.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;font-size:26px;color:#9a5b16">A row excluded by a pharmacy decision is not a row that is out of stock. The packet never lets those two look alike.</p>
+<aside>This is the beat that matters. The agent does not silently drop rows; it says which human decision removed each one.</aside>
+</section>
+<section id="nemotron" data-transition="fade" style="background:#15191c;color:#f6f3ec;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between;gap:44px">
+<div style="display:flex;flex-direction:column;gap:18px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:72px;font-weight:600;line-height:1.1;letter-spacing:-1.5px">NVIDIA Nemotron</h2>
+<p style="font-size:32px;line-height:1.45;color:#bdb8ab;width:1540px">One sentence, and only one: the line that tells the reader this packet reports supply and the clinical decision belongs to the pharmacist. Hosted on build.nvidia.com, running nemotron-3.5-lightning-30b-a3b.</p>
+</div>
+<div style="display:flex;gap:40px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#20262b;padding:40px;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#e0a86a">Two things we had to learn</h3>
+<p style="font-size:28px;line-height:1.5;color:#f6f3ec">The model ids in circulation are wrong. Only the live catalogue is reliable.</p>
+<p style="font-size:28px;line-height:1.5;color:#f6f3ec">The 3.5 family reasons by default and spends the whole budget on reasoning, returning an empty message, so the call turns thinking off.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#20262b;padding:40px;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#7fc9a9">It fails loudly</h3>
+<p style="font-size:28px;line-height:1.5;color:#f6f3ec">With no key, or on any error, the sentence is omitted and the omission is printed on the page.</p>
+<p style="font-size:28px;line-height:1.5;color:#bdb8ab">A packet that invents its own disclaimer is worse than one that admits a model did not answer.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;font-size:24px;color:#8f8a7e">The model writes the refusal. It never writes a row, a status or a recommendation.</p>
+<aside>Worth saying plainly: the only thing the language model is allowed to produce is the sentence that declines to advise.</aside>
+</section>
+<section id="honest" data-section="What is not claimed, and what comes next." data-transition="fade" style="background:#f6f3ec;color:#15191c;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between;gap:48px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:72px;font-weight:600;line-height:1.1;letter-spacing:-1.5px">What we are not claiming</h2>
+<div style="display:flex;flex-direction:column;gap:24px;width:1620px">
+<div style="display:flex;gap:28px;background:#ffffff;padding:34px 40px;border:1px solid #d8d2c4;border-radius:16px">
+<p style="width:360px;font-size:28px;font-weight:600;color:#9a5b16">Not the first</p>
+<p style="flex:1;font-size:28px;line-height:1.5;color:#4f4c45">rx-shortage-mcp does class-sibling lookups, RxFinder joins the shortage file to pricing, and Bluesight and Vizient sell into this market.</p>
+</div>
+<div style="display:flex;gap:28px;background:#ffffff;padding:34px 40px;border:1px solid #d8d2c4;border-radius:16px">
+<p style="width:360px;font-size:28px;font-weight:600;color:#9a5b16">Not comprehensive</p>
+<p style="flex:1;font-size:28px;line-height:1.5;color:#4f4c45">One ingredient and one endpoint today. Pricing was dropped: the 2026 acquisition-cost file 404s, and another tool already joins it.</p>
+</div>
+<div style="display:flex;gap:28px;background:#ffffff;padding:34px 40px;border:1px solid #d8d2c4;border-radius:16px">
+<p style="width:360px;font-size:28px;font-weight:600;color:#9a5b16">Not clinical</p>
+<p style="flex:1;font-size:28px;line-height:1.5;color:#4f4c45">Same class is not the same drug. Route, indication, dosing and contraindications are checked by nothing here.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;font-size:26px;color:#15191c">The wedge is narrow on purpose: a cited draft packet that deliberately refuses to name a substitute.</p>
+<aside>Judges reward a team that knows its own limits. Say this before they ask.</aside>
+</section>
+<section id="next" data-transition="fade" style="background:#15191c;color:#f6f3ec;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between;gap:48px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:76px;font-weight:600;line-height:1.1;letter-spacing:-1.5px">What we would build next</h2>
+<div style="display:flex;gap:32px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#20262b;padding:44px;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600;color:#e0a86a">Any ingredient</h3>
+<p style="font-size:28px;line-height:1.5;color:#bdb8ab">Pinned to one today. The engine already keys everything on package NDC, so the pin is a parameter, not a rewrite.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#20262b;padding:44px;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600;color:#e0a86a">The real formulary</h3>
+<p style="font-size:28px;line-height:1.5;color:#bdb8ab">A second Zetaris source, so other presentations can be filtered against what the hospital actually stocks rather than a typed rule.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#20262b;padding:44px;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600;color:#e0a86a">A shared decision history</h3>
+<p style="font-size:28px;line-height:1.5;color:#bdb8ab">The committee's decisions as a Meterless world model across sites, instead of one store per facility.</p>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:20px">
+<svg aria-label="Stopgap mark" width="56" height="56"><rect x="8" y="21" width="16" height="14" rx="3" fill="#f6f3ec"></rect><rect x="33" y="21" width="16" height="14" rx="3" fill="#f6f3ec"></rect><rect x="25" y="42" width="7" height="2.5" rx="1.25" fill="#e0a86a"></rect></svg>
+<p style="font-size:30px;color:#f6f3ec">stopgap-rx.vercel.app · github.com/AustinChris1/stopgap</p>
+</div>
+<aside>Close on the blank line again if there is time. The packet reports supply. The pharmacist signs.</aside>
+</section>
+</main>
+<script>
+  // Each slide is a fixed 1920x1080 canvas scaled to the window, so one file
+  // reads on screen and prints to PDF at the same proportions.
+  function fit() {
+    const pad = 48;
+    const scale = Math.min(1, (window.innerWidth - pad) / 1920);
+    for (const s of document.querySelectorAll('#deck > section')) {
+      s.style.transform = 'scale(' + scale + ')';
+      let frame = s.parentElement;
+      if (!frame || !frame.classList.contains('frame')) {
+        frame = document.createElement('div');
+        frame.className = 'frame';
+        s.replaceWith(frame);
+        frame.appendChild(s);
+      }
+      frame.style.width = 1920 * scale + 'px';
+      frame.style.height = 1080 * scale + 'px';
+    }
+  }
+  fit();
+  window.addEventListener('resize', fit);
+</script>
+</body>
+</html>

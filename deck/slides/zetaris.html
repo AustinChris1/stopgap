@@ -1,0 +1,19 @@
+<section id="zetaris" data-transition="fade" style="background:#f6f3ec;color:#15191c;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between;gap:44px">
+<div style="display:flex;flex-direction:column;gap:18px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:72px;font-weight:600;line-height:1.1;letter-spacing:-1.5px">Zetaris</h2>
+<p style="font-size:32px;line-height:1.45;color:#4f4c45;width:1540px">One Lightning REST table over the FDA endpoint, and a SchemaStore view that explodes <b>results</b> so each package becomes a row, split by presentation. Queried in place. Nothing copied into a warehouse.</p>
+</div>
+<div style="display:flex;gap:40px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#15191c;padding:40px;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#e0a86a">What surprised us</h3>
+<p style="font-size:30px;line-height:1.5;color:#f6f3ec">The join key never had to exist. We expected a second source keyed on RxCUI to separate the vial from the bag. The presentation string already on each row did it, and one REST table was the entire data layer.</p>
+</div>
+<div style="width:680px;display:flex;flex-direction:column;gap:16px;background:#ffffff;padding:40px;border:1px solid #d8d2c4;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#9a5b16">Verified, not described</h3>
+<p style="font-size:28px;line-height:1.5;color:#4f4c45">A real run against a local instance is committed in the repository: <b>11 rows</b>, recorded 27 October 2026.</p>
+<p style="font-size:26px;line-height:1.5;color:#6d6a62">A hosted deployment cannot reach a laptop, so the site serves that captured run labelled as recorded, never as live.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;font-size:24px;color:#6d6a62">The registration caches the response for the session so the demo is reproducible. The packet makes its own independent call to the same file.</p>
+<aside>Say the specific thing: we went in expecting to need a second source and a join key, and the data already carried the distinction.</aside>
+</section>

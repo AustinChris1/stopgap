@@ -1,0 +1,28 @@
+<section id="architecture" data-section="How the sponsor technologies were actually used." data-transition="fade" style="background:#f6f3ec;color:#15191c;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
+<h2 style="font-family:'Fraunces', Georgia, serif;font-size:72px;font-weight:600;line-height:1.1;letter-spacing:-1.5px">Architecture</h2>
+<div style="display:flex;gap:28px;align-items:stretch">
+<div style="width:380px;display:flex;flex-direction:column;gap:14px;background:#ffffff;padding:36px;border:1px solid #d8d2c4;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#9a5b16">Sources, keyed on package NDC</h3>
+<p style="font-size:26px;line-height:1.5;color:#4f4c45">openFDA shortages<br>RxNorm, via NLM RxNav<br>DailyMed labels</p>
+<p style="font-size:24px;line-height:1.45;color:#6d6a62">Never joined on drug name.</p>
+</div>
+<x-connector from="tl" style="width:56px;color:#9a5b16;border-width:2px"></x-connector>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#15191c;padding:36px;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#f6f3ec">Packet engine</h3>
+<p style="font-size:26px;line-height:1.5;color:#bdb8ab">Groups by the concentration printed on each row. Applies stored decisions. Leaves the clinical line empty.</p>
+<p style="font-size:24px;line-height:1.45;color:#8f8a7e">Hono, one codebase, served both as a local node server and as one Vercel function.</p>
+</div>
+<x-connector from="tl" style="width:56px;color:#9a5b16;border-width:2px"></x-connector>
+<div style="width:380px;display:flex;flex-direction:column;gap:14px;background:#ffffff;padding:36px;border:1px solid #d8d2c4;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600;color:#9a5b16">The packet</h3>
+<p style="font-size:26px;line-height:1.5;color:#4f4c45">Cited rows, an excluded section that names its decision, and a blank signature.</p>
+</div>
+</div>
+<div style="display:flex;gap:28px">
+<div style="flex:1;background:#ffffff;padding:30px 36px;border:1px solid #d8d2c4;border-radius:16px"><p style="font-size:26px;line-height:1.45;color:#4f4c45"><b>Zetaris</b> registers the same FDA endpoint as a Lightning REST table and queries it in place, beside the engine.</p></div>
+<div style="flex:1;background:#ffffff;padding:30px 36px;border:1px solid #d8d2c4;border-radius:16px"><p style="font-size:26px;line-height:1.45;color:#4f4c45"><b>Meterless H-MEM</b> holds the pharmacy's own decisions and the ledger behind them.</p></div>
+<div style="flex:1;background:#ffffff;padding:30px 36px;border:1px solid #d8d2c4;border-radius:16px"><p style="font-size:26px;line-height:1.45;color:#4f4c45"><b>Nemotron</b> drafts one sentence: the refusal.</p></div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;font-size:24px;color:#6d6a62">A pnpm workspace. The deployed site and the local one serve identical routes.</p>
+<aside>Be honest here: Zetaris sits beside the packet rather than building it. Both read the same endpoint, independently.</aside>
+</section>
