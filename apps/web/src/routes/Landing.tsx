@@ -127,9 +127,10 @@ export function Landing() {
 // The one authored moment: supply closes in from both sides and stops, leaving the signature rule.
 function GapDiagram({ reduce }: { reduce: boolean }) {
   const ease = [0.16, 1, 0.3, 1] as const;
+  // Opacity stays at 1 so a failed or skipped animation still leaves the bars on screen.
   const bar = (origin: "left" | "right") => ({
-    initial: reduce ? false : { scaleX: 0.28, opacity: 0 },
-    animate: { scaleX: 1, opacity: 1 },
+    initial: reduce ? false : { scaleX: 0.28 },
+    animate: { scaleX: 1 },
     transition: { duration: 1.1, delay: 0.25, ease },
     style: { transformOrigin: origin },
     className: "h-16 flex-1 rounded-sm bg-ink",
@@ -141,19 +142,12 @@ function GapDiagram({ reduce }: { reduce: boolean }) {
         <motion.div {...bar("left")} />
         <div className="w-20 shrink-0 text-center sm:w-28">
           <motion.div
-            initial={reduce ? false : { opacity: 0, scaleX: 0 }}
-            animate={{ opacity: 1, scaleX: 1 }}
+            initial={reduce ? false : { scaleX: 0 }}
+            animate={{ scaleX: 1 }}
             transition={{ duration: 0.6, delay: 0.95, ease }}
             className="h-px w-full bg-short"
           />
-          <motion.p
-            initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 1.15 }}
-            className="mt-2.5 text-xs text-short"
-          >
-            signature
-          </motion.p>
+          <p className="mt-2.5 text-xs text-short">signature</p>
         </div>
         <motion.div {...bar("right")} />
       </div>
