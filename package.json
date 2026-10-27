@@ -10,7 +10,8 @@
     "dev:web": "pnpm --filter @stopgap/web dev",
     "build": "pnpm -r build",
     "packet": "pnpm --filter @stopgap/server packet",
-    "vercel-build": "pnpm --filter @stopgap/web build"
+    "vercel-build": "pnpm --filter @stopgap/web build",
+    "zetaris:capture": "pnpm --filter @stopgap/server zetaris:capture"
   },
   "packageManager": "pnpm@9.9.0",
   "dependencies": {

@@ -8,7 +8,8 @@
     "start": "tsx --env-file-if-exists=../../.env src/index.ts",
     "packet": "tsx --env-file-if-exists=../../.env src/cli.ts",
     "typecheck": "tsc --noEmit",
-    "build": "tsc --noEmit"
+    "build": "tsc --noEmit",
+    "zetaris:capture": "tsx --env-file-if-exists=../../.env src/zetaris-capture.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.0",

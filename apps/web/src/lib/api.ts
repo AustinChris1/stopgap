@@ -59,6 +59,26 @@ async function json<T>(path: string, init?: RequestInit): Promise<T> {
   return body as T;
 }
 
+export interface RecordedRun {
+  recordedAt: string;
+  base: string;
+  route: string;
+  sqlFile: string;
+  sql: string;
+  columns: string[];
+  rows: unknown[][];
+  rowCount: number;
+}
+
+export interface ZetarisStatus {
+  configured: boolean;
+  base: string;
+  reachable: boolean;
+  lastRun: ZetarisProvenance | null;
+  recordedRun: RecordedRun | null;
+  note: string | null;
+}
+
 export interface Health {
   ok: boolean;
   pin: string;
@@ -79,10 +99,7 @@ export const api = {
     json<{ memories: { id: string; content: string; relevance: number }[]; trace: { retrievalReason: string; strategy: string } }>(
       `/api/recall?q=${encodeURIComponent(q)}`,
     ),
-  zetarisStatus: () =>
-    json<{ configured: boolean; base: string; reachable: boolean; lastRun: ZetarisProvenance | null; note: string | null }>(
-      "/api/zetaris/status",
-    ),
+  zetarisStatus: () => json<ZetarisStatus>("/api/zetaris/status"),
   zetarisSetup: () => json<{ log: string[] }>("/api/zetaris/setup", { method: "POST" }),
   zetarisQuery: () => json<{ columns: string[]; rows: unknown[][]; provenance: ZetarisProvenance }>("/api/zetaris/query"),
   refusal: () => json<{ ok: boolean; model: string | null; text?: string; error?: string }>("/api/refusal"),

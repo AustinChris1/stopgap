@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { AlertCircle, Brain, Check, Database, ExternalLink, Loader2, RefreshCw, Trash2 } from "lucide-react";
-import { api, type Decision, type Health, type Packet, type SupplyLine, type ZetarisProvenance } from "../lib/api.ts";
+import { api, type Decision, type Health, type Packet, type SupplyLine, type ZetarisProvenance, type ZetarisStatus } from "../lib/api.ts";
 import { Wordmark } from "../components/Logo.tsx";
 import { SupplyLadder } from "../components/SupplyLadder.tsx";
 
@@ -439,7 +439,7 @@ function MemoryPanel({
 }
 
 function ZetarisPanel({ initial }: { initial: ZetarisProvenance | null }) {
-  const [status, setStatus] = useState<{ configured: boolean; base: string; reachable: boolean; note: string | null } | null>(null);
+  const [status, setStatus] = useState<ZetarisStatus | null>(null);
   const [log, setLog] = useState<string[]>([]);
   const [run, setRun] = useState<ZetarisProvenance | null>(initial);
   const [busy, setBusy] = useState(false);
@@ -509,11 +509,55 @@ function ZetarisPanel({ initial }: { initial: ZetarisProvenance | null }) {
       )}
       {run && (
         <p className="mt-3 text-xs text-quiet">
-          {run.sqlFile} returned <strong className="font-mono tabular font-medium text-ink">{run.rowCount}</strong> rows
-          at <span className="font-mono tabular">{new Date(run.ranAt).toLocaleTimeString()}</span>
+          Live run of {run.sqlFile} returned{" "}
+          <strong className="font-mono tabular font-medium text-ink">{run.rowCount}</strong> rows at{" "}
+          <span className="font-mono tabular">{new Date(run.ranAt).toLocaleTimeString()}</span>
         </p>
       )}
+
+      {!run && status?.recordedRun && (
+        <div className="mt-4 border-t hairline pt-4">
+          <p className="text-xs text-quiet">
+            Recorded run, not live.{" "}
+            <span className="font-mono tabular">{status.recordedRun.sqlFile}</span> returned{" "}
+            <strong className="font-mono tabular font-medium text-ink">{status.recordedRun.rowCount}</strong> rows on{" "}
+            <span className="font-mono tabular">{new Date(status.recordedRun.recordedAt).toLocaleString()}</span> from a
+            Zetaris instance at <span className="font-mono">{status.recordedRun.base}</span>.
+          </p>
+          <RecordedTable run={status.recordedRun} />
+        </div>
+      )}
     </section>
+  );
+}
+
+function RecordedTable({ run }: { run: NonNullable<ZetarisStatus["recordedRun"]> }) {
+  const head = run.columns.length ? run.columns : run.rows[0]?.map((_, i) => `col ${i + 1}`) ?? [];
+  return (
+    <div className="mt-3 max-h-56 overflow-auto border hairline">
+      <table className="w-full border-collapse text-left text-xs">
+        <thead className="sticky top-0 bg-paper">
+          <tr>
+            {head.map((h) => (
+              <th key={String(h)} className="whitespace-nowrap border-b hairline px-2.5 py-2 font-medium text-quiet">
+                {String(h)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {run.rows.slice(0, 40).map((r, i) => (
+            <tr key={i} className="border-b hairline last:border-0">
+              {(r as unknown[]).map((cell, j) => (
+                <td key={j} className="max-w-[16rem] truncate px-2.5 py-1.5 font-mono tabular" title={String(cell ?? "")}>
+                  {String(cell ?? "")}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

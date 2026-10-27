@@ -1,3 +1,6 @@
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { buildPacket, SCOPE_NOTE, type ZetarisProvenance } from "./packet.ts";
@@ -15,6 +18,28 @@ const zetaris = new ZetarisClient();
 
 // Only meaningful on a long-lived server; a serverless instance may not keep it.
 let lastZetarisRun: ZetarisProvenance | null = null;
+
+// A run captured against a real instance, so a deployment that cannot reach one
+// still shows the rows it returned. Always labelled as recorded, never as live.
+interface RecordedRun {
+  recordedAt: string;
+  base: string;
+  route: string;
+  sqlFile: string;
+  sql: string;
+  columns: string[];
+  rows: unknown[][];
+  rowCount: number;
+}
+
+const recordedRun: RecordedRun | null = (() => {
+  try {
+    const p = resolve(dirname(fileURLToPath(import.meta.url)), "../../../zetaris/last-run.json");
+    return existsSync(p) ? (JSON.parse(readFileSync(p, "utf8")) as RecordedRun) : null;
+  } catch {
+    return null;
+  }
+})();
 
 app.get("/api/health", (c) =>
   c.json({
@@ -78,6 +103,7 @@ app.get("/api/zetaris/status", async (c) =>
     base: zetaris.base,
     reachable: await zetaris.reachable(),
     lastRun: lastZetarisRun,
+    recordedRun,
     note: process.env.VERCEL
       ? "Zetaris runs on the operator's own machine, so a hosted deployment cannot reach it. Run the app locally to use this panel."
       : null,
