@@ -6,7 +6,7 @@ and stops where the clinical judgement starts.
 
 Open Agent Hackathon 2026, Track 02: The Agent That Can Explain Why.
 
-**Live:** https://genai-eta-snowy.vercel.app
+**Live:** https://stopgap-rx.vercel.app
 
 **The mark:** two supply bars stopping short of each other, leaving the signature rule open in the gap.
 

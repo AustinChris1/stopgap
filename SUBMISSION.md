@@ -2,7 +2,7 @@
 
 **Track 02, The Agent That Can Explain Why.**
 Repository: https://github.com/AustinChris1/stopgap
-Live: https://genai-eta-snowy.vercel.app
+Live: https://stopgap-rx.vercel.app
 
 ## The problem
 
