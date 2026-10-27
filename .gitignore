@@ -10,3 +10,7 @@ dist/
 
 # form text, not for reviewers
 submission/
+
+# strategy notes, not for reviewers
+reports/
+research_notes/
