@@ -148,12 +148,15 @@ function Summary({ packet }: { packet: Packet }) {
   const all = [packet.pin, ...packet.sameConcentration, ...packet.otherPresentations, ...packet.excluded];
   const vials = all.filter((l) => !l.isPremix);
   const bags = all.filter((l) => l.isPremix);
-  const available = all.filter((l) => /^available$/i.test(l.availability));
+  // Counted on the rows that survive exclusions, so the tile never offers supply
+  // the pharmacy has already ruled out.
+  const kept = [packet.pin, ...packet.sameConcentration, ...packet.otherPresentations];
+  const available = kept.filter((l) => /^available$/i.test(l.availability));
 
   const tiles = [
     { glyph: <VialGlyph className="h-8 w-8" />, n: vials.length, label: "concentrate vials reported" },
     { glyph: <BagGlyph className="h-8 w-8" />, n: bags.length, label: "premixed bags, a different form" },
-    { glyph: <CircleCheck className="h-8 w-8" strokeWidth={1.4} />, n: available.length, label: "packages reported available" },
+    { glyph: <CircleCheck className="h-8 w-8" strokeWidth={1.4} />, n: available.length, label: packet.excluded.length ? "available after exclusions" : "packages reported available" },
     { glyph: <Ban className="h-8 w-8" strokeWidth={1.4} />, n: packet.excluded.length, label: "excluded by a stored decision" },
   ];
 
