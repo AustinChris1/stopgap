@@ -1,0 +1,130 @@
+{
+  "recordedAt": "2026-10-27T12:57:27.142Z",
+  "base": "http://localhost:3000",
+  "route": "ui-proxy",
+  "sqlFile": "02_supply_by_presentation.sql",
+  "sql": "SELECT\n    CASE WHEN presentation LIKE '%Dextrose%' THEN 'premixed bag' ELSE 'concentrate vial' END AS product_form,\n    presentation,\n    labeler,\n    ndc,\n    availability,\n    update_date,\n    resupply_note,\n    shortage_reason\nFROM stopgap.supply_rows\nORDER BY product_form, availability, labeler, ndc",
+  "columns": [
+    "product_form",
+    "presentation",
+    "labeler",
+    "ndc",
+    "availability",
+    "update_date",
+    "resupply_note",
+    "shortage_reason"
+  ],
+  "rows": [
+    [
+      "concentrate vial",
+      "Dopamine Hydrochloride, Injection, 200 mg/5mL (40 mg/1 mL) (NDC 0409-5820-01)",
+      "Hospira, Inc., a Pfizer Company",
+      "0409-5820-01",
+      "Available",
+      "10/21/2026",
+      null,
+      null
+    ],
+    [
+      "concentrate vial",
+      "Dopamine Hydrochloride, Injection, 400 mg/10mL (40 mg/1 mL) (NDC 0409-9104-20)",
+      "Hospira, Inc., a Pfizer Company",
+      "0409-9104-20",
+      "Limited Availability",
+      "10/21/2026",
+      "Limited Supply Available. Next Delivery: February 2027; Estimated Recovery: March 2027; Shortage per Manufacturer: Manufacturing Delay",
+      "Other"
+    ],
+    [
+      "concentrate vial",
+      "Dopamine Hydrochloride, Injection, 40 mg/1 mL (NDC 0143-9252-25)",
+      "Hikma Pharmaceuticals USA, Inc.",
+      "0143-9252-25",
+      "Unavailable",
+      "10/14/2026",
+      "Product temporarily on backorder. Additional lots will be available in the February 2027 timeframe.",
+      "Demand increase for the drug"
+    ],
+    [
+      "concentrate vial",
+      "Dopamine Hydrochloride, Injection, 40 mg/1 mL (NDC 0143-9254-25)",
+      "Hikma Pharmaceuticals USA, Inc.",
+      "0143-9254-25",
+      "Unavailable",
+      "10/14/2026",
+      "Additional lots will be available in the November 2026 timeframe.  Product will be made available as it is released.",
+      "Demand increase for the drug"
+    ],
+    [
+      "premixed bag",
+      "Dopamine Hydrochloride In Dextrose 5% In Plastic Container, Injection, 80 mg/100 mL (NDC 0338-1005-02)",
+      "Baxter Healthcare",
+      "0338-1005-02",
+      "Available",
+      "10/16/2026",
+      null,
+      null
+    ],
+    [
+      "premixed bag",
+      "Dopamine Hydrochloride In Dextrose 5% In Plastic Container, Injection, 80 mg/100 mL (NDC 0338-1005-03)",
+      "Baxter Healthcare",
+      "0338-1005-03",
+      "Available",
+      "10/16/2026",
+      null,
+      null
+    ],
+    [
+      "premixed bag",
+      "Dopamine Hydrochloride In Dextrose 5% In Plastic Container, Injection, 160 mg/100 mL (NDC 0338-1007-02)",
+      "Baxter Healthcare",
+      "0338-1007-02",
+      "Available",
+      "10/16/2026",
+      null,
+      null
+    ],
+    [
+      "premixed bag",
+      "Dopamine Hydrochloride In Dextrose 5% In Plastic Container, Injection, 160 mg/100 mL (NDC 0338-1007-03)",
+      "Baxter Healthcare",
+      "0338-1007-03",
+      "Available",
+      "10/16/2026",
+      null,
+      null
+    ],
+    [
+      "premixed bag",
+      "Dopamine Hydrochloride In Dextrose 5% In Plastic Container, Injection, 400 mg/250 mL (1.6 mg/1 mL) (NDC 0409-0042-12)",
+      "Hospira, Inc., a Pfizer Company",
+      "0409-0042-12",
+      "Available",
+      "10/21/2026",
+      null,
+      null
+    ],
+    [
+      "premixed bag",
+      "Dopamine Hydrochloride In Dextrose 5% In Plastic Container, Injection, 800 mg/250 mL (3.2 mg/1 mL) (NDC 0409-1858-12)",
+      "Hospira, Inc., a Pfizer Company",
+      "0409-1858-12",
+      "Available",
+      "10/21/2026",
+      null,
+      null
+    ],
+    [
+      "premixed bag",
+      "Dopamine Hydrochloride In Dextrose 5% In Plastic Container, Injection, 800 mg/500 mL (1.6 mg/1 mL) (NDC 0409-7809-24)",
+      "Hospira, Inc., a Pfizer Company",
+      "0409-7809-24",
+      "Unavailable",
+      "10/21/2026",
+      "Next Delivery and Estimated Recovery: December 2027; Shortage per Manufacturer: Manufacturing Delay",
+      "Other"
+    ]
+  ],
+  "rowCount": 11
+}
