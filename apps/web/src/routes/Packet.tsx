@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { AlertCircle, Brain, Check, Database, ExternalLink, Loader2, RefreshCw, Trash2 } from "lucide-react";
 import { api, type Decision, type Health, type Packet, type SupplyLine, type ZetarisProvenance } from "../lib/api.ts";
 import { Wordmark } from "../components/Logo.tsx";
+import { SupplyLadder } from "../components/SupplyLadder.tsx";
 
 export function PacketView() {
   const [facility, setFacility] = useState("default");
@@ -83,6 +84,18 @@ export function PacketView() {
         {packet && (
           <>
             <Provenance packet={packet} />
+            <section>
+              <SectionLabel>Where the shortage sits</SectionLabel>
+              <p className="mt-1.5 max-w-[70ch] text-sm text-quiet">
+                Every reported package, placed by the concentration printed on its own row.
+              </p>
+              <div className="mt-4">
+                <SupplyLadder
+                  lines={[packet.pin, ...packet.sameConcentration, ...packet.otherPresentations, ...packet.excluded]}
+                  pinNdc={packet.pin.ndc}
+                />
+              </div>
+            </section>
             <PinRow line={packet.pin} />
             <Group
               title="Same concentration, other labeler"
