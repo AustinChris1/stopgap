@@ -574,11 +574,19 @@ function ZetarisPanel({ initial }: { initial: ZetarisProvenance | null }) {
         <pre className="mt-3 max-h-36 overflow-auto bg-paper p-3 font-mono text-xs leading-relaxed">{log.join("\n")}</pre>
       )}
       {run && (
-        <p className="mt-3 text-xs text-quiet">
-          Live run of {run.sqlFile} returned{" "}
-          <strong className="font-mono tabular font-medium text-ink">{run.rowCount}</strong> rows at{" "}
-          <span className="font-mono tabular">{new Date(run.ranAt).toLocaleTimeString()}</span>
-        </p>
+        <div className="mt-4 border-t hairline pt-4">
+          <p className="text-xs">
+            <span className="inline-flex items-center gap-1.5 font-medium text-supply">
+              <span className="inline-block h-2 w-2 rounded-full bg-current" /> Live run
+            </span>
+            <span className="text-quiet">
+              {" "}· {run.sqlFile} returned{" "}
+              <strong className="font-mono tabular font-medium text-ink">{run.rowCount}</strong> rows at{" "}
+              <span className="font-mono tabular">{new Date(run.ranAt).toLocaleTimeString()}</span>
+            </span>
+          </p>
+          <ResultTable columns={run.columns} rows={run.rows} />
+        </div>
       )}
 
       {!run && status?.recordedRun && (
@@ -590,17 +598,18 @@ function ZetarisPanel({ initial }: { initial: ZetarisProvenance | null }) {
             <span className="font-mono tabular">{new Date(status.recordedRun.recordedAt).toLocaleString()}</span> from a
             Zetaris instance at <span className="font-mono">{status.recordedRun.base}</span>.
           </p>
-          <RecordedTable run={status.recordedRun} />
+          <ResultTable columns={status.recordedRun.columns} rows={status.recordedRun.rows} />
         </div>
       )}
     </section>
   );
 }
 
-function RecordedTable({ run }: { run: NonNullable<ZetarisStatus["recordedRun"]> }) {
-  const head = run.columns.length ? run.columns : run.rows[0]?.map((_, i) => `col ${i + 1}`) ?? [];
+function ResultTable({ columns, rows }: { columns: string[]; rows: unknown[][] }) {
+  const head = columns.length ? columns : (rows[0]?.map((_, i) => `col ${i + 1}`) ?? []);
+  if (rows.length === 0) return null;
   return (
-    <div className="mt-3 max-h-56 overflow-auto border hairline">
+    <div className="mt-3 max-h-60 overflow-auto border hairline">
       <table className="w-full border-collapse text-left text-xs">
         <thead className="sticky top-0 bg-paper">
           <tr>
@@ -612,7 +621,7 @@ function RecordedTable({ run }: { run: NonNullable<ZetarisStatus["recordedRun"]>
           </tr>
         </thead>
         <tbody>
-          {run.rows.slice(0, 40).map((r, i) => (
+          {rows.slice(0, 40).map((r, i) => (
             <tr key={i} className="border-b hairline last:border-0">
               {(r as unknown[]).map((cell, j) => (
                 <td key={j} className="max-w-[16rem] truncate px-2.5 py-1.5 font-mono tabular" title={String(cell ?? "")}>

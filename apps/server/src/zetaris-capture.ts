@@ -23,21 +23,7 @@ console.log("running the query...");
 const file = "02_supply_by_presentation.sql";
 const result = await z.query(file);
 
-// The UI proxy returns rows without column names, so take them from the
-// query's own AS aliases rather than printing "col 1".
-function aliasesFrom(sql: string): string[] {
-  const select = /select\s+([\s\S]*?)\s+from\s/i.exec(sql);
-  if (!select) return [];
-  return select[1]
-    .split(/,(?![^(]*\))/)
-    .map((part) => {
-      const alias = /\s+as\s+([a-z0-9_]+)\s*$/i.exec(part.trim());
-      return alias ? alias[1] : part.trim().split(/[\s.]+/).pop() ?? "";
-    })
-    .filter(Boolean);
-}
-
-const columns = result.columns.length ? result.columns : aliasesFrom(result.sql);
+const columns = result.columns;
 
 const record = {
   recordedAt: new Date().toISOString(),

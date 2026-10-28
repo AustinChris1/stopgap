@@ -134,8 +134,24 @@ export class ZetarisClient {
   async query(name: string, limit = 500): Promise<QueryResult & { sql: string }> {
     const statements = splitSql(readFileSync(resolve(SQL_DIR, name), "utf8"));
     const last = statements[statements.length - 1];
-    return { ...(await this.run(last, limit)), sql: last };
+    const out = await this.run(last, limit);
+    const columns = out.columns.length ? out.columns : aliasesFrom(last);
+    return { ...out, columns, sql: last };
   }
+}
+
+// The UI proxy returns rows without column names, so take them from the
+// query's own AS aliases rather than showing "col 1".
+export function aliasesFrom(sql: string): string[] {
+  const select = /select\s+([\s\S]*?)\s+from\s/i.exec(sql);
+  if (!select) return [];
+  return select[1]
+    .split(/,(?![^(]*\))/)
+    .map((part) => {
+      const alias = /\s+as\s+([a-z0-9_]+)\s*$/i.exec(part.trim());
+      return alias ? alias[1] : (part.trim().split(/[\s.]+/).pop() ?? "");
+    })
+    .filter(Boolean);
 }
 
 export function splitSql(text: string): string[] {
