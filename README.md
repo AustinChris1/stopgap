@@ -32,18 +32,41 @@ ingredient-level join would merge them, which is why there is no ingredient-leve
 
 ## Sponsor technology
 
-**Zetaris** registers the FDA shortage endpoint as a Lightning REST table and queries it in place. The
-SQL is in [zetaris/sql](zetaris/sql). Nothing is copied into a warehouse, and an uncached query refetches
-the endpoint, so a judge can re-run it live.
+**Zetaris** registers the FDA shortage endpoint as a single Lightning REST table, and a view explodes
+`results` so each package becomes a row, split by presentation. The query runs in place and nothing is
+copied into a warehouse. The SQL is in [zetaris/sql](zetaris/sql).
+
+The registration runs `CACHE TABLE`, which pins the response for the session so a demo is reproducible.
+The packet itself makes its own independent live call to the same endpoint, so the two are separate paths
+to the same file. A real run is committed at [zetaris/last-run.json](zetaris/last-run.json): 11 rows,
+captured 27 October 2026.
 
 **Meterless** supplies the memory. The H-MEM reference engine stores one pharmacist decision with its
 source and an append-only trust ledger entry. The next packet applies it: rows the decision excludes move
 to their own section and cite the decision id that removed them.
 
-**NVIDIA Nemotron** drafts the one refusal sentence, through the hosted endpoint at build.nvidia.com. With
-no key, or on any error, the sentence is omitted and the packet stands without it. It is never fabricated.
+**NVIDIA Nemotron** drafts the one refusal sentence, on the hosted endpoint at build.nvidia.com using
+`nvidia/nemotron-3.5-lightning-30b-a3b`. The call sets `chat_template_kwargs: {thinking: false}`, because
+the 3.5 family otherwise spends its whole budget on `reasoning_content` and returns an empty message. With
+no key, or on any error, the sentence is omitted and the omission is shown. It is never fabricated.
+
+## Pre-existing components
+
+Everything in this repository was written during the build window, 22 to 27 October 2026, except the
+following, which are declared here as pre-existing:
+
+| Component | What it is | Origin |
+|---|---|---|
+| [vendor/hmem](vendor/hmem) | the Meterless H-MEM reference engine, Apache 2.0 | vendored unmodified from `meterless/meterless` with `degit`; our code imports it, none of it is ours |
+| [zetaris/sql/01_create_sources.sql](zetaris/sql/01_create_sources.sql) | the Lightning REST registration | adapted from the verified PokeAPI example in `zetaris/getting-started`; the endpoint, the view and the split by presentation are ours |
+| `deck/img/*` | two product screenshots in the deck | captured from this project during the window |
+
+No other prior project, template or starter was used. The agent, the packet engine, the UI, the Zetaris
+view, the memory wiring and the Nemotron call were all written inside the window.
 
 ## Run it
+
+Node 20 or newer and pnpm 9. From a clean clone:
 
 ```bash
 pnpm install
@@ -52,7 +75,9 @@ pnpm dev:server     # API on http://localhost:8787
 pnpm dev:web        # UI on http://localhost:5173
 ```
 
-The packet works with no keys at all. Zetaris and Nemotron each add a panel when configured.
+Open http://localhost:5173. **The packet works with no keys and no Zetaris**, reading openFDA, RxNorm and
+DailyMed directly, so a reviewer can run it in two commands. Zetaris and Nemotron each light up a panel
+once configured; [SETUP.md](SETUP.md) covers both.
 
 ```bash
 pnpm packet                                   # print the packet in the terminal
